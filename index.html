@@ -7,7 +7,8 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
         :root {
@@ -16,13 +17,6 @@
             --text: #0f172a;
             --accent: #2563eb;
             --border: #e2e8f0;
-        }
-
-        [data-theme="dark"] {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-            --border: #334155;
         }
 
         body { 
@@ -34,167 +28,149 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
-        .container { width: 100%; max-width: 400px; }
+        .container { width: 100%; max-width: 400px; display: none; animation: fadeIn 0.8s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 1.5rem;
             margin-bottom: 20px;
             text-align: center;
-            transition: transform 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        h2, h3 {
-            font-size: 1.3rem;
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
+        #login-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
+            z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;
         }
 
-        p {
-            font-size: 0.85rem;
-            opacity: 0.7;
-            margin-bottom: 15px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+        }
+
+        input {
+            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px;
+            border: 1px solid var(--border); text-align: center; font-size: 1rem; outline: none;
         }
 
         button {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
+            width: 100%; padding: 14px; border-radius: 12px; border: none;
+            font-weight: 700; cursor: pointer; transition: all 0.2s;
         }
 
-        button:active {
-            transform: scale(0.98);
+        .video-container { 
+            position: relative; padding-bottom: 177.77%; height: 0; 
+            border-radius: 15px; overflow: hidden; background: #000; margin-bottom: 10px; 
         }
-
-        .social-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        /* Video Styling */
-        .video-container {
-            position: relative;
-            padding-bottom: 177.77%; /* Vertical 9:16 Ratio */
-            height: 0;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #000;
-            margin-bottom: 10px;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border: none;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            box-sizing: border-box;
-            background: var(--bg);
-            color: var(--text);
-        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div id="login-overlay">
+    <div class="card glass-card" style="width: 100%; max-width: 340px;">
+        <h2 style="letter-spacing: 2px;">🔐 ᴍɪᴜxᴏ ᴀᴄᴄᴇꜱꜱ</h2>
+        <p>ᴘʟᴇᴀꜱᴇ ʟᴏɢɪɴ ᴛᴏ ᴄᴏɴᴛɪɴᴜᴇ</p>
+        
+        <div id="g_id_onload"
+             data-client_id="785119101330-8c05o9segra6q23qvfh8qb5c3qdaobh7.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-size="large" data-logo_alignment="left"></div>
 
-    <div class="card" style="border-top: 5px solid var(--accent);">
-        <h2 style="letter-spacing: 2px;"> MIUXO</h2>
+        <div style="margin: 15px 0; opacity: 0.6; font-size: 0.8rem;">— ᴏʀ ᴜꜱᴇ ᴄᴏᴅᴇ —</div>
+
+        <input type="password" id="pass-input" placeholder="••••••••">
+        <button onclick="checkPass()" id="unlock-btn" style="background: white; color: #2563eb;">Unlock Hub</button>
+        
+        <p id="error-msg" style="color: #ff9494 !important; display: none; margin-top: 15px; font-weight: bold;">Invalid Access Code</p>
+    </div>
+</div>
+
+<div class="container" id="main-content">
+    <div class="card" style="border-top: 6px solid var(--accent);">
+        <h2 id="welcome-text" style="letter-spacing: 2px;">MIUXO</h2>
         <p style="font-weight: bold; color: var(--accent);">ᴏꜰꜰɪᴄɪᴀʟ ʙʀᴀɴᴅ ʜᴜʙ</p>
-        <p>ꜱʜᴏᴘ ᴏɴʟɪɴᴇ ᴀᴛ ᴍɪᴜxᴏ ɪɴᴅɪᴀ</p>
-        <a href="https://miuxo.in" target="_blank" style="text-decoration: none;">
-            <button style="background: var(--accent); color: white; box-shadow: 0 4px 0 #1e40af;">
-                🌐  MY WEBSITE
-            </button>
+        <a href="https://miuxo.in" target="_blank" style="text-decoration:none">
+            <button style="background: var(--accent); color: white;">🌐 VISIT WEBSITE</button>
         </a>
     </div>
 
     <div class="card">
         <h3>ꜰᴇᴀᴛᴜʀᴇᴅ ꜱʜᴏʀᴛ</h3>
         <div class="video-container">
-            <iframe 
-                src="https://www.youtube.com/embed/u28pkQXq67k" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
-        </div>
-        <p>Boost your Shopify sales with analytics insights.</p>
-    </div>
-
-    <div class="card">
-        <h2 style="letter-spacing: 1px;">SHOPIFY</h2>
-        <p>ᴘʀᴇᴍɪᴜᴍ ᴅɪɢɪᴛᴀʟ ꜱᴛᴏʀᴇ ʙᴜɪʟᴅᴇʀ</p>
-        <a href="https://www.shopify.com/" target="_blank" style="text-decoration: none;">
-            <button style="background: #95bf47; color: white; box-shadow: 0 4px 0 #5e8e3e;">
-                🛍️ SHOPIFY WEBSITE
-            </button>
-        </a>
-    </div>
-
-    <div class="card">
-        <h2 style="letter-spacing: 1px;">SUPERPROFILE</h2>
-        <p>ɪɴꜱᴛᴀɢʀᴀᴍ ᴀᴜᴛᴏᴍᴀᴛɪᴏɴ & ʟɪɴᴋꜱ</p>
-        <a href="https://superprofile.bio/aimiuxo" target="_blank" style="text-decoration: none;">
-            <button style="background: #000000; color: white; border: 1px solid #333; box-shadow: 0 4px 0 #222;">
-                🚀 SUPERPROFILE WEBSITE
-            </button>
-        </a>
-    </div>
-
-    <div class="card">
-        <h2 style="letter-spacing: 1px;">VEED AI</h2>
-        <p>ꜰʀᴇᴇ ᴀɪ ᴠɪᴅᴇᴏ ᴄʀᴇᴀᴛɪᴏɴ ᴛᴏᴏʟꜱ</p>
-        <a href="https://www.veed.io/tools/ai-video" target="_blank" style="text-decoration: none;">
-            <button style="background: linear-gradient(90deg, #7c3aed 0%, #2563eb 100%); color: white;">
-                🎬 VEED AI WEBSITE
-            </button>
-        </a>
-    </div>
-
-    <div class="card" style="border: 1px dashed var(--accent);">
-        <h3>JOIN THE COMMUNITY</h3>
-        <p>ꜰᴏʟʟᴏᴡ ꜰᴏʀ ᴅᴀɪʟʏ ᴜᴘᴅᴀᴛᴇꜱ</p>
-        <div class="social-grid">
-            <a href="https://www.youtube.com/@aimiuxo" target="_blank" style="text-decoration: none;">
-                <button style="background: #FF0000; color: white; margin: 0;">YOUTUBE</button>
-            </a>
-            <a href="https://www.instagram.com/aimiuxo/" target="_blank" style="text-decoration: none;">
-                <button style="background: #E4405F; color: white; margin: 0;">Instagram</button>
-            </a>
+            <iframe src="https://www.youtube.com/embed/u28pkQXq67k"></iframe>
         </div>
     </div>
 
-    <div class="card">
-        <h3>ᴄᴏɴᴛᴀᴄᴛ ᴍᴇ</h3>
-        <form action="https://api.web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="YOUR_KEY_HERE">
-            <input type="email" name="email" placeholder="Your Email" required>
-            <textarea name="message" placeholder="How can I help?" rows="3" required></textarea>
-            <button type="submit" style="background: var(--text); color: var(--bg);">Send Message</button>
-        </form>
-    </div>
-
+    <button onclick="logout()" style="background: transparent; color: var(--text); border: 1px solid var(--border); font-size: 0.7rem; margin-top: 10px; opacity: 0.5;">Logout Session</button>
 </div>
+
+<script>
+    const ACCESS_CODE = "MIUXO2025";
+    const SESSION_TIMEOUT = 24 * 60 * 60 * 1000;
+
+    // --- GOOGLE LOGIN HANDLER ---
+    function handleCredentialResponse(response) {
+        // Decoding the Google JWT to get user's name
+        const responsePayload = parseJwt(response.credential);
+        const userName = responsePayload.given_name || "Member";
+        
+        const sessionData = {
+            verified: true,
+            user: userName,
+            loginTime: new Date().getTime()
+        };
+        localStorage.setItem('miuxo_auth', JSON.stringify(sessionData));
+        unlockHub(userName);
+    }
+
+    function parseJwt(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(window.atob(base64));
+    }
+
+    // --- MANUAL PASS HANDLER ---
+    function checkPass() {
+        const input = document.getElementById('pass-input').value;
+        if (input === ACCESS_CODE) {
+            const sessionData = { verified: true, user: "Member", loginTime: new Date().getTime() };
+            localStorage.setItem('miuxo_auth', JSON.stringify(sessionData));
+            unlockHub("Member");
+        } else {
+            document.getElementById('error-msg').style.display = 'block';
+        }
+    }
+
+    function unlockHub(name) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        document.getElementById('welcome-text').innerText = `WELCOME, ${name.toUpperCase()}`;
+    }
+
+    function logout() {
+        localStorage.removeItem('miuxo_auth');
+        location.reload();
+    }
+
+    window.onload = () => {
+        const session = JSON.parse(localStorage.getItem('miuxo_auth'));
+        if (session && (new Date().getTime() - session.loginTime < SESSION_TIMEOUT)) {
+            unlockHub(session.user);
+        }
+    };
+</script>
 
 </body>
 </html>
