@@ -60,16 +60,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        /* 🔐 Glassmorphism Login Overlay */
-        #login-overlay {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
         }
 
         .glass-card {
@@ -117,19 +107,6 @@
 </head>
 <body>
 
-<div id="login-overlay">
-    <div class="card glass-card" style="width: 100%; max-width: 340px;">
-        <h2 style="letter-spacing: 2px;">🔐 ᴍɪᴜxᴏ ᴀᴄᴄᴇꜱꜱ</h2>
-        <p>ᴘʟᴇᴀꜱᴇ ᴇɴᴛᴇʀ ʏᴏᴜʀ ᴄᴏᴅᴇ</p>
-        <input type="password" id="pass-input" placeholder="••••••••" autofocus>
-        <button onclick="checkPass()" id="unlock-btn" style="background: white; color: #2563eb;">Unlock Hub</button>
-        <p id="error-msg" style="color: #ff9494 !important; display: none; margin-top: 15px; font-weight: bold;">Invalid Access Code</p>
-        <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-            <a href="mailto:support@miuxo.in?subject=Requesting%20MIUXO%20Code" style="color: rgba(255,255,255,0.7); font-size: 0.75rem; text-decoration: none;">ꜰᴏʀɢᴏᴛ ᴄᴏᴅᴇ? ʀᴇQᴜᴇꜱᴛ ᴀᴄᴄᴇꜱꜱ ✉️</a>
-        </div>
-    </div>
-</div>
-
 <div class="container" id="main-content">
     <div id="install-banner" class="card">
         <h3>✨ Miuxo App</h3>
@@ -166,95 +143,3 @@
 
     <button onclick="logout()" style="background: transparent; color: var(--text); border: 1px solid var(--border); font-size: 0.7rem; margin-top: 10px; opacity: 0.5;">Logout Session</button>
 </div>
-
-<script>
-    // 1. CONFIGURATION
-    const ACCESS_CODE = "MIUXO2025"; 
-    const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 Hours in milliseconds
-
-    // 2. PASSWORD VISIBILITY TOGGLE
-    function togglePass() {
-        const input = document.getElementById('pass-input');
-        const icon = document.querySelector('span[onclick="togglePass()"]');
-        if (input.type === "password") {
-            input.type = "text";
-            icon.innerText = "🔒"; // Change icon when visible
-        } else {
-            input.type = "password";
-            icon.innerText = "👁️";
-        }
-    }
-
-    // 3. CHECK PASSWORD & SET TIMESTAMP
-    function checkPass() {
-        const input = document.getElementById('pass-input').value;
-        const btn = document.getElementById('unlock-btn');
-        const error = document.getElementById('error-msg');
-        
-        if (input === ACCESS_CODE) {
-            btn.innerText = "Access Granted...";
-            btn.style.background = "#22c55e"; 
-            btn.style.color = "white";
-            
-            // Store login status with the current time
-            const sessionData = {
-                verified: true,
-                loginTime: new Date().getTime()
-            };
-            localStorage.setItem('miuxo_auth', JSON.stringify(sessionData));
-            
-            setTimeout(unlockHub, 600);
-        } else {
-            error.style.display = 'block';
-            document.querySelector('.glass-card').style.animation = 'shake 0.4s';
-            setTimeout(() => { document.querySelector('.glass-card').style.animation = ''; }, 400);
-            document.getElementById('pass-input').value = '';
-        }
-    }
-
-    // 4. UNLOCK UI
-    function unlockHub() {
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('main-content').style.display = 'block';
-    }
-
-    // 5. SESSION CHECK ON LOAD
-    window.onload = () => {
-        const savedSession = localStorage.getItem('miuxo_auth');
-        
-        if (savedSession) {
-            const data = JSON.parse(savedSession);
-            const currentTime = new Date().getTime();
-            
-            // If user is verified AND the session hasn't expired (24h)
-            if (data.verified && (currentTime - data.loginTime < SESSION_TIMEOUT)) {
-                unlockHub();
-            } else {
-                // Session expired or invalid
-                localStorage.removeItem('miuxo_auth');
-                console.log("Session expired. Please log in again.");
-            }
-        }
-    };
-
-    // 6. UTILITIES
-    document.getElementById('pass-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkPass();
-    });
-
-    function logout() {
-        localStorage.removeItem('miuxo_auth');
-        location.reload();
-    }
-</script>
-
-<style>
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
-    }
-</style>
-
-</body>
-</html>
