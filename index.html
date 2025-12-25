@@ -197,13 +197,8 @@
 
 <div class="content-card">
     <h3>🌐 MIUXO ECOSYSTEM</h3>
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 15px;">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;" id="social-grid-main">
         
-        <style>
-            .social-card { width: calc(33.33% - 8px); min-width: 90px; }
-            @media (max-width: 360px) { .social-card { width: calc(50% - 6px); } }
-        </style>
-
         <a href="https://discord.com/invite/2rcKEjsVwV" target="_blank" class="social-card">
             <div style="font-size:1.5rem;">💬</div>
             <span style="font-size:0.6rem;">DISCORD</span>
@@ -234,13 +229,32 @@
             <span style="font-size:0.6rem;">REPLIT</span>
         </a>
 
-        <a href="https://www.veed.io/" target="_blank" class="social-card" style="border: 1px solid #343434; background: rgba(0,0,0,0.2);">
+        <a href="https://www.veed.io/" target="_blank" class="social-card" style="border: 1px solid #343434;">
             <div style="font-size:1.5rem;">📽️</div>
             <span style="font-size:0.6rem;">VEED.IO</span>
+        </a>
+
+        <a href="https://tools.picsart.com/" target="_blank" class="social-card" style="border: 1px solid #ff0066;">
+            <div style="font-size:1.5rem;">🎨</div>
+            <span style="font-size:0.6rem;">PICSART</span>
+        </a>
+
+        <a href="https://www.godaddy.com/" target="_blank" class="social-card" style="border: 1px solid #00a63f;">
+            <div style="font-size:1.5rem;">🚀</div>
+            <span style="font-size:0.6rem; color: #00a63f;">GODADDY</span>
         </a>
         
     </div>
 </div>
+
+<style>
+    /* Responsive Adjustment for 9 items */
+    @media (max-width: 360px) {
+        #social-grid-main {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+    }
+</style>
    
     <div class="content-card">
         <h3>📩 ASSET REQUEST</h3>
