@@ -12,162 +12,132 @@
 
     <style>
         :root {
-            --bg: #ffffff;
-            --card-bg: #f8fafc;
-            --text: #0f172a;
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
             --accent: #2563eb;
-            --border: #e2e8f0;
         }
 
         body { 
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg);
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        .container { width: 100%; max-width: 400px; display: none; animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
+        /* 🔐 Glassmorphism Login Overlay */
         #login-overlay {
-            position: fixed; inset: 0;
-            background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
-            z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            background: inherit; padding: 20px;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.1) !important;
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: white !important;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 2.5rem; text-align: center;
+            width: 100%; max-width: 360px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
         input {
-            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px;
-            border: 1px solid var(--border); text-align: center; font-size: 1rem; outline: none;
+            width: 100%; padding: 14px; margin: 15px 0; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05);
+            color: white; text-align: center; font-size: 1rem; outline: none;
         }
 
-        button {
+        #unlock-btn {
             width: 100%; padding: 14px; border-radius: 12px; border: none;
-            font-weight: 700; cursor: pointer; transition: all 0.2s;
+            background: white; color: #2563eb; font-weight: 700; cursor: pointer;
         }
 
-        .video-container { 
-            position: relative; padding-bottom: 177.77%; height: 0; 
-            border-radius: 15px; overflow: hidden; background: #000; margin-bottom: 10px; 
+        /* 📦 Main Content (Hidden initially) */
+        .container { display: none; width: 100%; max-width: 400px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .content-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center;
         }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
 
 <div id="login-overlay">
-    <div class="card glass-card" style="width: 100%; max-width: 340px;">
-        <h2 style="letter-spacing: 2px;">🔐 ᴍɪᴜxᴏ ᴀᴄᴄᴇꜱꜱ</h2>
-        <p>ᴘʟᴇᴀꜱᴇ ʟᴏɢɪɴ ᴛᴏ ᴄᴏɴᴛɪɴᴜᴇ</p>
+    <div class="glass-card">
+        <h2 style="letter-spacing: 2px;">🔐 MIUXO ACCESS</h2>
+        <p style="opacity: 0.8; font-size: 0.9rem;">PLEASE ENTER YOUR CODE</p>
         
+        <input type="password" id="pass-input" placeholder="••••••••">
+        <button onclick="checkPass()" id="unlock-btn">UNLOCK HUB</button>
+
+        <div style="margin: 20px 0; opacity: 0.5;">OR</div>
+
         <div id="g_id_onload"
              data-client_id="785119101330-8c05o9segra6q23qvfh8qb5c3qdaobh7.apps.googleusercontent.com"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
+             data-callback="handleGoogleLogin">
         </div>
-        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-size="large" data-logo_alignment="left"></div>
-
-        <div style="margin: 15px 0; opacity: 0.6; font-size: 0.8rem;">— ᴏʀ ᴜꜱᴇ ᴄᴏᴅᴇ —</div>
-
-        <input type="password" id="pass-input" placeholder="••••••••">
-        <button onclick="checkPass()" id="unlock-btn" style="background: white; color: #2563eb;">Unlock Hub</button>
+        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-size="large" data-width="100%"></div>
         
-        <p id="error-msg" style="color: #ff9494 !important; display: none; margin-top: 15px; font-weight: bold;">Invalid Access Code</p>
+        <p id="error-msg" style="color: #ff9494; display: none; margin-top: 15px; font-weight: bold;">Invalid Access Code</p>
     </div>
 </div>
 
 <div class="container" id="main-content">
-    <div class="card" style="border-top: 6px solid var(--accent);">
-        <h2 id="welcome-text" style="letter-spacing: 2px;">MIUXO</h2>
-        <p style="font-weight: bold; color: var(--accent);">ᴏꜰꜰɪᴄɪᴀʟ ʙʀᴀɴᴅ ʜᴜʙ</p>
-        <a href="https://miuxo.in" target="_blank" style="text-decoration:none">
-            <button style="background: var(--accent); color: white;">🌐 VISIT WEBSITE</button>
-        </a>
+    <div class="content-card">
+        <h2 id="welcome-msg">WELCOME BACK</h2>
+        <p>Official Miuxo Brand Hub is Active</p>
+        <button onclick="logout()" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer;">LOGOUT SESSION</button>
     </div>
-
-    <div class="card">
-        <h3>ꜰᴇᴀᴛᴜʀᴇᴅ ꜱʜᴏʀᴛ</h3>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/u28pkQXq67k"></iframe>
-        </div>
-    </div>
-
-    <button onclick="logout()" style="background: transparent; color: var(--text); border: 1px solid var(--border); font-size: 0.7rem; margin-top: 10px; opacity: 0.5;">Logout Session</button>
 </div>
 
 <script>
-    const ACCESS_CODE = "MIUXO2025";
-    const SESSION_TIMEOUT = 24 * 60 * 60 * 1000;
+    const MASTER_CODE = "MIUXO2025";
+    const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 Hours
 
-    // --- GOOGLE LOGIN HANDLER ---
-    function handleCredentialResponse(response) {
-        // Decoding the Google JWT to get user's name
-        const responsePayload = parseJwt(response.credential);
-        const userName = responsePayload.given_name || "Member";
-        
-        const sessionData = {
-            verified: true,
-            user: userName,
-            loginTime: new Date().getTime()
-        };
-        localStorage.setItem('miuxo_auth', JSON.stringify(sessionData));
-        unlockHub(userName);
-    }
-
-    function parseJwt(token) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        return JSON.parse(window.atob(base64));
-    }
-
-    // --- MANUAL PASS HANDLER ---
     function checkPass() {
         const input = document.getElementById('pass-input').value;
-        if (input === ACCESS_CODE) {
-            const sessionData = { verified: true, user: "Member", loginTime: new Date().getTime() };
-            localStorage.setItem('miuxo_auth', JSON.stringify(sessionData));
-            unlockHub("Member");
+        if (input === MASTER_CODE) {
+            startSession("Member");
         } else {
             document.getElementById('error-msg').style.display = 'block';
         }
     }
 
-    function unlockHub(name) {
+    function handleGoogleLogin(response) {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        startSession(payload.given_name);
+    }
+
+    function startSession(name) {
+        const sessionData = {
+            auth: true,
+            user: name,
+            time: new Date().getTime()
+        };
+        localStorage.setItem('miuxo_session', JSON.stringify(sessionData));
+        showHub(name);
+    }
+
+    function showHub(name) {
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
-        document.getElementById('welcome-text').innerText = `WELCOME, ${name.toUpperCase()}`;
+        document.getElementById('welcome-msg').innerText = `WELCOME, ${name.toUpperCase()}`;
     }
 
     function logout() {
-        localStorage.removeItem('miuxo_auth');
+        localStorage.removeItem('miuxo_session');
         location.reload();
     }
 
     window.onload = () => {
-        const session = JSON.parse(localStorage.getItem('miuxo_auth'));
-        if (session && (new Date().getTime() - session.loginTime < SESSION_TIMEOUT)) {
-            unlockHub(session.user);
+        const session = JSON.parse(localStorage.getItem('miuxo_session'));
+        if (session && (new Date().getTime() - session.time < SESSION_DURATION)) {
+            showHub(session.user);
         }
     };
 </script>
