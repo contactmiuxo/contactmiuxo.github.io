@@ -124,7 +124,6 @@
         .gallery img { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
         .visitor-badge { margin-top: 20px; opacity: 0.6; font-size: 0.7rem; }
 
-        /* 🌐 SOCIAL GRID STYLES */
         .social-card {
             background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
             border-radius: 15px; padding: 15px 5px; text-decoration: none; color: var(--text);
@@ -132,7 +131,6 @@
         }
         .social-card:hover { background: var(--accent); transform: translateY(-5px); border-color: transparent; }
 
-        /* 📜 CHANGELOG LIST */
         .version-list { text-align: left; font-size: 0.8rem; margin-top: 15px; }
         .version-item { border-left: 2px solid var(--accent); padding-left: 10px; margin-bottom: 10px; opacity: 0.8; }
     </style>
@@ -199,19 +197,39 @@
     </div>
 
     <div class="content-card">
+        <h3>🎨 BRAND IDENTITY</h3>
+        <p style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 15px;">Official colors and visual standards.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div onclick="copyColor('#2563eb', this)" style="display: flex; align-items: center; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 10px; cursor: pointer; border: 1px solid var(--border);">
+                <div style="width: 40px; height: 40px; background: #2563eb; border-radius: 8px; margin-right: 15px;"></div>
+                <div style="text-align: left;">
+                    <div class="color-label" style="font-size: 0.7rem; font-weight: bold;">PRIMARY BLUE</div>
+                    <div style="font-size: 0.6rem; opacity: 0.5;">#2563eb</div>
+                </div>
+            </div>
+            <div onclick="copyColor('#0f172a', this)" style="display: flex; align-items: center; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 10px; cursor: pointer; border: 1px solid var(--border);">
+                <div style="width: 40px; height: 40px; background: #0f172a; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-right: 15px;"></div>
+                <div style="text-align: left;">
+                    <div class="color-label" style="font-size: 0.7rem; font-weight: bold;">DEEP SLATE</div>
+                    <div style="font-size: 0.6rem; opacity: 0.5;">#0f172a</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 15px; padding: 10px; border: 1px dashed var(--border); border-radius: 10px; text-align: left;">
+            <div style="font-size: 0.65rem; font-weight: bold; color: var(--accent); margin-bottom: 5px;">TYPOGRAPHY</div>
+            <div style="font-size: 0.8rem; letter-spacing: 1px;">Segoe UI Semibold</div>
+            <div style="font-size: 0.6rem; opacity: 0.5;">Main Digital Interface Font</div>
+        </div>
+    </div>
+
+    <div class="content-card">
         <h3>🌐 CONNECT WITH MIUXO</h3>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px;">
             <a href="#" class="social-card"><div style="font-size:1.5rem;">💬</div><span style="font-size:0.6rem;">DISCORD</span></a>
             <a href="#" class="social-card"><div style="font-size:1.5rem;">📸</div><span style="font-size:0.6rem;">INSTAGRAM</span></a>
             <a href="#" class="social-card"><div style="font-size:1.5rem;">🎬</div><span style="font-size:0.6rem;">YOUTUBE</span></a>
-        </div>
-    </div>
-
-    <div class="content-card">
-        <h3 style="font-size: 0.9rem; margin-bottom: 10px;">📜 VERSION HISTORY</h3>
-        <div class="version-list">
-            <div class="version-item"><strong>v1.8.0</strong><br>Social Grid & Holiday Popups.</div>
-            <div class="version-item" style="opacity: 0.4;"><strong>v1.5.0</strong><br>Legal Footer & PWA Core.</div>
         </div>
     </div>
 
@@ -255,6 +273,18 @@
 <script>
     const MASTER_CODE = "MIUXO2025";
     
+    function copyColor(hex, element) {
+        navigator.clipboard.writeText(hex);
+        const label = element.querySelector('.color-label');
+        const originalText = label.innerText;
+        label.innerText = "COPIED!";
+        label.style.color = "#10b981";
+        setTimeout(() => {
+            label.innerText = originalText;
+            label.style.color = "inherit";
+        }, 1500);
+    }
+
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
     }
@@ -335,8 +365,8 @@
     }
 
     const legalData = {
-        privacy: "We store your theme preference and login session locally on your device. No personal data is shared with third parties.",
-        terms: "All Miuxo assets are for personal community use. Commercial redistribution without permission is strictly prohibited."
+        privacy: "We store your theme preference and login session locally on your device.",
+        terms: "All Miuxo assets are for personal community use only."
     };
 
     function toggleLegal(type) {
