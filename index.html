@@ -97,7 +97,50 @@
 
 <div id="sync-loader"><div class="spinner"></div> MIUXO DATA SYNC...</div>
 
-<div class="announcement"><div class="ticker-content">🎄 MIUXO 2025 MASTER HUB • ANALYTICS ACTIVE • SEARCH ENABLED ✨</div></div>
+<style>
+    .miuxo-banner {
+        width: 100%;
+        padding: 12px 0;
+        text-align: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 1001;
+        position: relative;
+    }
+
+    /* PRESET 1: NEW YEAR (Golden Glow) */
+    .theme-newyear {
+        background: linear-gradient(90deg, #b48608, #fbe134, #b48608);
+        color: #000;
+        text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+    }
+
+    /* PRESET 2: GIVEAWAY (Pulse Red) */
+    .theme-giveaway {
+        background: #ff4d4d;
+        color: white;
+        animation: pulse-red 2s infinite;
+    }
+
+    /* PRESET 3: MAINTENANCE (Alert Orange) */
+    .theme-alert {
+        background: #f59e0b;
+        color: white;
+    }
+
+    @keyframes pulse-red {
+        0% { background-color: #ff4d4d; }
+        50% { background-color: #b91c1c; }
+        100% { background-color: #ff4d4d; }
+    }
+</style>
+
+<div class="miuxo-banner theme-newyear">
+    ✨ HAPPY NEW YEAR 2026! THE FUTURE IS MIUXO ✨
+</div>
 
 <div id="login-overlay">
     <div class="content-card" style="max-width: 340px;">
@@ -166,7 +209,7 @@
 
 <script>
     const MASTER_CODE = "2025";
-    const APPS_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+    const APPS_SCRIPT_URL = "https://docs.google.com/spreadsheets/d/1hRxusWivIUaEnE1P88YEAgy6kAxz6kKfH2fiCdY4uOs/edit?usp=sharing";
 
     function filterTools() {
         let input = document.getElementById('search-bar').value.toLowerCase();
