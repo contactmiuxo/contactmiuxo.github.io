@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ᴍɪᴜxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
+    <title>ᴇᴄᴏʀᴇxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" id="status-bar-color" content="#2563eb">
@@ -11,7 +11,6 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
-        /* 🎨 THEME VARIABLES */
         :root {
             --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             --card-bg: rgba(255, 255, 255, 0.05);
@@ -19,7 +18,7 @@
             --accent: #2563eb;
             --border: rgba(255, 255, 255, 0.1);
             --glass: blur(15px);
-            --input-bg: rgba(255, 255, 255, 0.05);
+            --banner-bg: #2563eb;
         }
 
         [data-theme="light"] {
@@ -29,7 +28,7 @@
             --accent: #2563eb;
             --border: rgba(0, 0, 0, 0.1);
             --glass: blur(10px);
-            --input-bg: rgba(0, 0, 0, 0.05);
+            --banner-bg: #1e293b;
         }
 
         body { 
@@ -37,185 +36,116 @@
             background: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--text);
-            margin: 0; padding: 20px;
+            margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: background 0.3s, color 0.3s;
         }
 
-        /* 🌓 THEME TOGGLE BUTTON */
+        /* 📢 ANNOUNCEMENT BANNER */
+        .announcement {
+            width: 100%; background: var(--banner-bg); color: white;
+            padding: 10px 0; text-align: center; font-size: 0.85rem;
+            font-weight: bold; letter-spacing: 1px;
+        }
+
+        /* 🌓 THEME TOGGLE */
         .theme-toggle {
-            position: fixed; top: 20px; right: 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 10px; border-radius: 50%;
-            cursor: pointer; backdrop-filter: var(--glass);
-            z-index: 10001; width: 44px; height: 44px;
+            position: fixed; top: 50px; right: 20px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            color: var(--text); width: 44px; height: 44px; border-radius: 50%;
+            cursor: pointer; backdrop-filter: var(--glass); z-index: 10001;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* 🔐 Glassmorphism Login Overlay */
         #login-overlay {
             position: fixed; inset: 0; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
-            background: inherit; padding: 20px;
+            background: inherit;
         }
 
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: var(--glass);
-            -webkit-backdrop-filter: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 2.5rem; text-align: center;
-            width: 100%; max-width: 360px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        .container { display: none; width: 100%; max-width: 400px; padding: 20px; box-sizing: border-box; }
+
+        .content-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 20px; margin-bottom: 20px;
+            text-align: center; backdrop-filter: var(--glass);
         }
 
         input, textarea {
             width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
-            border: 1px solid var(--border); background: var(--input-bg);
-            color: var(--text); text-align: center; font-size: 1rem; outline: none; box-sizing: border-box;
+            border: 1px solid var(--border); background: rgba(0,0,0,0.05);
+            color: var(--text); outline: none; box-sizing: border-box;
         }
 
-        textarea { text-align: left; font-family: inherit; resize: none; }
-
-        #unlock-btn, .action-btn {
+        .action-btn {
             width: 100%; padding: 14px; border-radius: 12px; border: none;
-            background: var(--accent); color: white; font-weight: 700; cursor: pointer; transition: 0.3s;
-        }
-
-        #unlock-btn { background: white; color: #2563eb; }
-
-        .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
-
-        /* 📦 Main Content */
-        .container { display: none; width: 100%; max-width: 400px; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .content-card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center;
-            backdrop-filter: var(--glass);
+            background: var(--accent); color: white; font-weight: 700; cursor: pointer;
         }
 
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .gallery-item img { width: 100%; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 8px; }
-        
-        .download-btn {
-            background: var(--input-bg); color: var(--text); border: 1px solid var(--border);
-            width: 100%; border-radius: 8px; font-size: 0.75rem; padding: 8px; cursor: pointer;
-        }
+        .gallery img { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
     </style>
 </head>
 <body data-theme="dark">
 
-<button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+<div class="announcement" id="banner">
+    ✨ WELCOME TO THE NEW MIUXO BRAND HUB 2025 ✨
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()">🌓</button>
 
 <div id="login-overlay">
-    <div class="glass-card">
-        <h2 style="letter-spacing: 2px;">🔐 MIUXO ACCESS</h2>
-        <p style="opacity: 0.8; font-size: 0.9rem;">PLEASE ENTER YOUR CODE</p>
-        
-        <input type="password" id="pass-input" placeholder="••••••••">
-        <button onclick="checkPass()" id="unlock-btn">UNLOCK HUB</button>
-
-        <div style="margin: 20px 0; opacity: 0.5;">OR</div>
-
-        <div id="g_id_onload"
-             data-client_id="785119101330-8c05o9segra6q23qvfh8qb5c3qdaobh7.apps.googleusercontent.com"
-             data-callback="handleGoogleLogin">
-        </div>
-        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-size="large" data-width="100%"></div>
-        
-        <p id="error-msg" style="color: #ff9494; display: none; margin-top: 15px; font-weight: bold;">Invalid Access Code</p>
+    <div class="content-card" style="width: 320px;">
+        <h2>🔐 MIUXO ACCESS</h2>
+        <input type="password" id="pass-input" placeholder="Enter Code">
+        <button onclick="checkPass()" class="action-btn">UNLOCK</button>
+        <div style="margin:15px; opacity:0.5">OR</div>
+        <div id="g_id_onload" data-client_id="YOUR_ID" data-callback="handleGoogleLogin"></div>
+        <div class="g_id_signin" data-type="standard"></div>
     </div>
 </div>
 
 <div class="container" id="main-content">
     <div class="content-card">
-        <h2 id="welcome-msg">WELCOME BACK</h2>
-        <p>Official Miuxo Brand Hub is Active</p>
-        <button onclick="logout()" style="background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer;">LOGOUT SESSION</button>
+        <h2 id="welcome-msg">WELCOME</h2>
+        <button onclick="logout()" style="background:none; border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:5px;">LOGOUT</button>
     </div>
 
     <div class="content-card">
-        <h3 style="margin-top:0;">🎥 FEATURED MEDIA</h3>
-        <div style="position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; background: #000;">
-            <iframe src="https://www.youtube.com/shorts/u28pkQXq67k" 
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
-                    allowfullscreen></iframe>
+        <h3>🎥 FEATURED MEDIA</h3>
+        <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:12px; overflow:hidden;">
+            <iframe src="https://www.youtube.com/embed/u28pkQXq67k" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"></iframe>
         </div>
     </div>
 
     <div class="content-card">
         <h3>✨ MEMBER GALLERY</h3>
         <div class="gallery">
-            <div class="gallery-item">
-                <img src="icon-512.png" alt="HQ Asset">
-                <a href="icon-512.png" download><button class="download-btn">📥 Save HQ</button></a>
-            </div>
-            <div class="gallery-item">
-                <img src="icon-192.png" alt="Mobile Asset">
-                <a href="icon-192.png" download><button class="download-btn">📥 Save App</button></a>
-            </div>
+            <img src="icon-512.png" alt="Asset 1">
+            <img src="icon-192.png" alt="Asset 2">
         </div>
-    </div>
-
-    <div class="content-card">
-        <h3>✉️ CONTACT ADMIN</h3>
-        <form action="mailto:shammas78099@gmail.com" method="post" enctype="text/plain">
-            <input type="text" name="name" placeholder="Your Name" required style="text-align: left;">
-            <textarea name="message" placeholder="How can we help?" rows="3" required></textarea>
-            <button type="submit" class="action-btn">SEND MESSAGE</button>
-        </form>
-    </div>
-
-    <div class="content-card" style="border: 1px dashed var(--accent); background: none;">
-        <p style="font-size: 0.8rem; margin: 0;">📱 ɪɴꜱᴛᴀʟʟ ᴀꜱ ᴀᴘᴘ: ᴛᴀᴘ ꜱʜᴀʀᴇ, ᴛʜᴇɴ 'ᴀᴅᴅ ᴛᴏ ʜᴏᴍᴇ ꜱᴄʀᴇᴇɴ'</p>
     </div>
 </div>
 
 <script>
     const MASTER_CODE = "MIUXO2025";
-    const SESSION_DURATION = 24 * 60 * 60 * 1000;
 
-    // 🌗 THEME LOGIC
     function toggleTheme() {
         const body = document.body;
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
+        const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         body.setAttribute('data-theme', newTheme);
         localStorage.setItem('miuxo_theme', newTheme);
-        
-        // Update PWA Status Bar Color
-        const metaColor = newTheme === 'dark' ? '#0f172a' : '#ffffff';
-        document.getElementById('status-bar-color').setAttribute('content', metaColor);
     }
 
-    // Initialize Theme
-    const savedTheme = localStorage.getItem('miuxo_theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
+    // Initialize saved theme
+    document.body.setAttribute('data-theme', localStorage.getItem('miuxo_theme') || 'dark');
 
     function checkPass() {
-        const input = document.getElementById('pass-input').value;
-        if (input === MASTER_CODE) {
-            startSession("Member");
-        } else {
-            document.getElementById('error-msg').style.display = 'block';
-        }
-    }
-
-    function handleGoogleLogin(response) {
-        const payload = JSON.parse(atob(response.credential.split('.')[1]));
-        startSession(payload.given_name);
+        if (document.getElementById('pass-input').value === MASTER_CODE) startSession("Member");
     }
 
     function startSession(name) {
-        const sessionData = { auth: true, user: name, time: new Date().getTime() };
-        localStorage.setItem('miuxo_session', JSON.stringify(sessionData));
+        localStorage.setItem('miuxo_session', JSON.stringify({ auth: true, user: name, time: Date.now() }));
         showHub(name);
     }
 
@@ -225,24 +155,12 @@
         document.getElementById('welcome-msg').innerText = `WELCOME, ${name.toUpperCase()}`;
     }
 
-    function logout() {
-        localStorage.removeItem('miuxo_session');
-        location.reload();
-    }
-
     window.onload = () => {
         const session = JSON.parse(localStorage.getItem('miuxo_session'));
-        if (session && (new Date().getTime() - session.time < SESSION_DURATION)) {
-            showHub(session.user);
-        }
+        if (session && (Date.now() - session.time < 86400000)) showHub(session.user);
     };
 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
-        });
-    }
+    function logout() { localStorage.removeItem('miuxo_session'); location.reload(); }
 </script>
-
 </body>
 </html>
