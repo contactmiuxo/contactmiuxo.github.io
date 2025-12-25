@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ᴍɪᴜxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4HHDSGNYP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-K4HHDSGNYP');
+    </script>
     
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="manifest" href="manifest.json">
@@ -58,26 +66,28 @@
             text-align: center; backdrop-filter: var(--glass); width: 100%; box-sizing: border-box;
         }
 
-        /* --- ECOSYSTEM GRID & SEARCH --- */
         #search-bar {
-            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px;
+            width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px;
             border: 1px solid var(--border); background: rgba(255,255,255,0.03);
-            color: white; text-align: left; font-size: 0.9rem;
+            color: white; font-size: 0.9rem; outline: none; transition: 0.3s;
         }
-        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); gap: 10px; margin-top: 10px; }
+        #search-bar:focus { border-color: var(--accent); background: rgba(255,255,255,0.07); }
+        .tool-count { font-size: 0.65rem; opacity: 0.5; text-transform: uppercase; margin-bottom: 15px; display: block; letter-spacing: 1px; }
+
+        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); gap: 10px; }
         .social-card { 
             background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
             border-radius: 15px; padding: 15px 5px; text-decoration: none; color: var(--text);
             transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 8px;
         }
-        .social-card:hover { background: var(--accent); transform: translateY(-5px); border-color: white !important; }
-        .social-card[style*="display: none"] { display: none !important; }
+        .social-card:hover { background: var(--accent); transform: translateY(-5px); border-color: white !important; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         #admin-panel { border: 1px solid gold !important; display: none; background: rgba(251, 191, 36, 0.03); }
         .fb-card { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; margin-top: 8px; text-align: left; font-size: 0.75rem; border-left: 3px solid gold; }
 
         input, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); outline: none; box-sizing: border-box; text-align: center; }
-        .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: white; font-weight: 700; cursor: pointer; }
+        .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: white; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .action-btn:hover { background: #1d4ed8; transform: scale(1.02); }
 
         #login-overlay { position: fixed; inset: 0; background: var(--bg-gradient); z-index: 999; display: flex; align-items: center; justify-content: center; }
         .container { display: none; width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; z-index: 2; }
@@ -85,9 +95,9 @@
 </head>
 <body>
 
-<div id="sync-loader"><div class="spinner"></div> SYNCING MIUXO CLOUD...</div>
+<div id="sync-loader"><div class="spinner"></div> MIUXO DATA SYNC...</div>
 
-<div class="announcement"><div class="ticker-content">🎄 MIUXO HOLIDAY HUB 2025 • ECOSYSTEM EXPANDED • LIVE STATUS ACTIVE ✨</div></div>
+<div class="announcement"><div class="ticker-content">🎄 MIUXO 2025 MASTER HUB • ANALYTICS ACTIVE • SEARCH ENABLED ✨</div></div>
 
 <div id="login-overlay">
     <div class="content-card" style="max-width: 340px;">
@@ -110,18 +120,20 @@
 
     <div class="content-card" id="admin-panel">
         <h3 style="color: gold; margin: 0;">👑 ADMIN CONSOLE</h3>
-        <p id="user-count" style="font-size: 0.8rem; margin: 10px 0; color: #fbbf24;">Syncing Users...</p>
+        <p id="user-count" style="font-size: 0.8rem; margin: 10px 0; color: #fbbf24;">Loading logs...</p>
         <div id="admin-fb-list"></div>
     </div>
 
     <div class="content-card">
         <h2 id="welcome-txt" style="margin: 0;">WELCOME</h2>
-        <button onclick="logout()" style="background:transparent; color:white; border:1px solid rgba(255,255,255,0.2); padding:5px 12px; border-radius:8px; cursor:pointer; font-size:0.65rem; margin-top: 10px;">LOGOUT</button>
+        <button onclick="logout()" style="background:transparent; color:white; border:1px solid rgba(255,255,255,0.2); padding:5px 12px; border-radius:8px; cursor:pointer; font-size:0.6rem; margin-top: 10px;">END SESSION</button>
     </div>
 
     <div class="content-card">
         <h3>🌐 MIUXO ECOSYSTEM</h3>
-        <input type="text" id="search-bar" placeholder="🔍 Search tools (e.g. AI, Store, Discord)..." onkeyup="filterTools()">
+        <input type="text" id="search-bar" placeholder="🔍 Search tools..." onkeyup="filterTools()">
+        <span class="tool-count" id="count-label">Available Tools: 18</span>
+        
         <div class="social-grid" id="tool-grid">
             <a href="https://discord.com/invite/2rcKEjsVwV" target="_blank" class="social-card"><div>💬</div><span style="font-size:0.6rem;">DISCORD</span></a>
             <a href="https://www.instagram.com/aimiuxo/reels/" target="_blank" class="social-card"><div>📸</div><span style="font-size:0.6rem;">INSTA</span></a>
@@ -154,15 +166,22 @@
 
 <script>
     const MASTER_CODE = "2025";
-    const APPS_SCRIPT_URL = "https://docs.google.com/spreadsheets/d/1hRxusWivIUaEnE1P88YEAgy6kAxz6kKfH2fiCdY4uOs/edit?usp=sharing";
+    const APPS_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
 
     function filterTools() {
         let input = document.getElementById('search-bar').value.toLowerCase();
         let cards = document.getElementsByClassName('social-card');
+        let visibleCount = 0;
         for (let i = 0; i < cards.length; i++) {
             let title = cards[i].innerText.toLowerCase();
-            cards[i].style.display = title.includes(input) ? "flex" : "none";
+            if(title.includes(input)) {
+                cards[i].style.display = "flex";
+                visibleCount++;
+            } else {
+                cards[i].style.display = "none";
+            }
         }
+        document.getElementById('count-label').innerText = `Matching Tools: ${visibleCount}`;
     }
 
     function runTimer() {
@@ -177,6 +196,7 @@
     setInterval(runTimer, 1000);
 
     function checkPass() { if (document.getElementById('pass-input').value === MASTER_CODE) login("Admin", true); else alert("Invalid Code"); }
+    
     function handleGoogleLogin(response) {
         const user = JSON.parse(atob(response.credential.split('.')[1]));
         if(APPS_SCRIPT_URL.includes("script")) fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "log", name: user.name, email: user.email }) });
