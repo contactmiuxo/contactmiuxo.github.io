@@ -4,17 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ᴍɪᴜxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4HHDSGNYP"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-K4HHDSGNYP');
-    </script>
-    
-    <link rel="icon" type="image/png" href="logo.png">
-    <meta name="theme-color" content="#2563eb">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
@@ -35,79 +24,77 @@
             color: var(--text);
             margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Elements */
-        #sync-loader { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.6); backdrop-filter: var(--glass); padding: 8px 15px; border-radius: 30px; border: 1px solid var(--border); display: none; align-items: center; gap: 10px; font-size: 0.7rem; z-index: 1000; color: gold; }
-        .spinner { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.1); border-top-color: gold; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .miuxo-banner { width: 100%; padding: 12px 0; text-align: center; font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1001; }
-        .theme-newyear { background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; }
-
+        #snow-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; }
+        .miuxo-banner { width: 100%; padding: 12px 0; text-align: center; font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1001; background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; }
         .content-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; backdrop-filter: var(--glass); width: 100%; max-width: 500px; box-sizing: border-box; }
-        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); gap: 10px; }
-        .social-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 15px; padding: 15px 5px; text-decoration: none; color: var(--text); transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .social-card:hover { background: var(--accent); transform: translateY(-5px); border-color: white !important; }
-
-        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); outline: none; box-sizing: border-box; }
-        .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: white; font-weight: 700; cursor: pointer; }
         
-        #login-overlay { position: fixed; inset: 0; background: var(--bg-gradient); z-index: 999; display: flex; align-items: center; justify-content: center; }
-        .container { display: none; width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
+        /* Input & Buttons */
+        #pass-input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: none; box-sizing: border-box; background: rgba(255,255,255,0.1); color: white; }
+        .action-btn { background: var(--accent); color: white; font-weight: 700; cursor: pointer; border-radius: 12px; padding: 14px; width: 100%; border: none; transition: 0.3s; }
+        .action-btn:hover { background: #1d4ed8; }
 
-        #countdown-row { display: flex; gap: 8px; justify-content: center; margin: 15px 0; }
-        .time-unit { background: var(--card-bg); border: 1px solid var(--border); padding: 8px; border-radius: 12px; min-width: 55px; }
-        .time-num { display: block; font-size: 1.1rem; font-weight: 800; color: #fbbf24; }
-        .time-lbl { font-size: 0.55rem; opacity: 0.6; text-transform: uppercase; }
+        /* Tool Grid */
+        #search-bar { width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 12px; margin-top: 10px; outline: none; }
+        .tool-count { display: block; font-size: 0.7rem; color: #94a3b8; margin: 10px 0; }
+        .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+        .social-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 15px; padding: 15px 5px; text-decoration: none; color: white; transition: 0.3s; display: flex; flex-direction: column; align-items: center; }
+        .social-card:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-3px); }
+        .social-card div { font-size: 1.5rem; margin-bottom: 5px; }
+
+        /* Reveal Pop-up */
+        .reveal-header { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 5px; }
+        .gift-box-icon { width: 45px; height: 45px; }
+        .access-frame { width: 100%; max-width: 380px; aspect-ratio: 1 / 1; margin: 20px auto; border: 4px solid #fbbf24; border-radius: 25px; overflow: hidden; background: #0a0a0a; box-shadow: 0 0 30px rgba(251, 191, 36, 0.5); }
+        .access-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .gift-btn-3d { width: 220px; height: 60px; background: linear-gradient(135deg, #ef4444, #991b1b); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.4s; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .collect-btn { background: #fbbf24; color: #000; font-weight: 900; border-radius: 15px; padding: 15px 40px; border: none; cursor: pointer; width: 70%; text-transform: uppercase; }
+
+        .container { display: none; width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
+        #login-overlay { position: fixed; inset: 0; background: var(--bg-gradient); z-index: 9999; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-<div id="sync-loader"><div class="spinner"></div> MIUXO DATA SYNC...</div>
+<canvas id="snow-canvas"></canvas>
+<audio id="gift-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
 
-<div class="miuxo-banner theme-newyear">
-    ✨ HAPPY NEW YEAR 2026! THE FUTURE IS MIUXO ✨
-</div>
+<div class="miuxo-banner">✨ HAPPY NEW YEAR 2026! THE FUTURE IS MIUXO ✨</div>
 
 <div id="login-overlay">
     <div class="content-card" style="max-width: 340px;">
         <h2 style="margin-bottom: 20px;">🔐 HUB ACCESS</h2>
         <input type="password" id="pass-input" placeholder="Master Code">
         <button onclick="checkPass()" class="action-btn">UNLOCK HUB</button>
+        
         <div style="margin:20px 0; opacity: 0.3;">OR</div>
-        <div id="g_id_onload" data-client_id="785119101330-40kgkkoekfbsqu7vo4t6leqalltrs7th.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
+        
+        <div id="g_id_onload" 
+             data-client_id="785119101330-40kgkkoekfbsqu7vo4t6leqalltrs7th.apps.googleusercontent.com" 
+             data-callback="handleGoogleLogin">
+        </div>
         <div class="g_id_signin" data-type="standard" data-theme="filled_blue"></div>
+    </div>
+</div>
+
+<div id="gift-reveal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.98); z-index:10002; align-items:center; justify-content:center; flex-direction:column; padding: 20px;">
+    <div class="content-card" style="border:none; background: transparent; backdrop-filter: none;">
+        <div class="reveal-header">
+            <img src="https://cdn-icons-png.flaticon.com/512/4213/4213958.png" class="gift-box-icon" alt="gift">
+            <h1 style="color:#fbbf24; font-size: 1.8rem; margin: 0;">ACCESS GRANTED</h1>
+        </div>
+        <p style="color: #ccc; margin-bottom: 15px; font-size: 0.9rem;">MIUXO Elite 2025 Asset Pack has been synchronized.</p>
+        <div class="access-frame">
+            <img src="https://t3.ftcdn.net/jpg/02/80/07/56/360_F_280075613_WCV04D4efUSjQytJ7DtN3okBoHUHLBni.jpg" alt="MIUXO Asset">
+        </div>
+        <button onclick="document.getElementById('gift-reveal').style.display='none'" class="collect-btn">COLLECT & BACK</button>
     </div>
 </div>
 
 <div class="container" id="main-content">
     
-    <div id="countdown-row">
-        <div class="time-unit"><span class="time-num" id="d">00</span><span class="time-lbl">Days</span></div>
-        <div class="time-unit"><span class="time-num" id="h">00</span><span class="time-lbl">Hrs</span></div>
-        <div class="time-unit"><span class="time-num" id="m">00</span><span class="time-lbl">Mins</span></div>
-    </div>
-
-    <div class="content-card" id="vip-section" style="display: none; border: 2px solid var(--vip-gold);">
-        <h3 style="color: var(--vip-gold); margin: 0;">💎 VIP ELITE ACCESS</h3>
-        <div class="social-grid" style="margin-top:15px;">
-            <a href="#" class="social-card" style="border: 1px solid var(--vip-gold);"><div>⚡</div><span style="font-size:0.6rem;">GPT-4</span></a>
-            <a href="#" class="social-card" style="border: 1px solid var(--vip-gold);"><div>💰</div><span style="font-size:0.6rem;">ADMIN</span></a>
-        </div>
-    </div>
-
-    <div class="content-card" id="admin-panel" style="display:none; border-color: gold;">
-        <h3 style="color: gold; margin: 0;">👑 ADMIN CONSOLE</h3>
-        <p id="user-count" style="font-size: 0.8rem; margin: 10px 0; color: #fbbf24;">Syncing Database...</p>
-        <div id="admin-fb-list"></div>
-    </div>
-
-    <div class="content-card">
-        <h2 id="welcome-txt" style="margin: 0;">WELCOME</h2>
-        <button onclick="logout()" style="background:transparent; color:white; border:1px solid rgba(255,255,255,0.2); padding:5px 12px; border-radius:8px; cursor:pointer; font-size:0.6rem; margin-top: 10px;">LOGOUT</button>
-    </div>
-
     <div class="content-card">
         <h3>🌐 MIUXO ECOSYSTEM</h3>
         <input type="text" id="search-bar" placeholder="🔍 Search tools..." onkeyup="filterTools()">
@@ -135,87 +122,57 @@
         </div>
     </div>
 
-    <div class="content-card">
-        <h3>📩 ASSET REQUEST</h3>
-        <input type="text" id="fb-topic" placeholder="Asset Name">
-        <textarea id="fb-details" placeholder="Brief description..." style="height: 70px;"></textarea>
-        <button onclick="submitRequest()" class="action-btn">SUBMIT REQUEST</button>
+    <div class="content-card" style="border: 2px solid #ef4444;">
+        <h3 style="color: #ef4444;">🎄 CHRISTMAS SPECIAL</h3>
+        <button class="gift-btn-3d" onclick="openGift()">🎁 OPEN 3D GIFT</button>
     </div>
-
-    <div class="content-card" style="background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.1); text-align: left;">
-        <h4 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">⚖️ MIUXO OFFICIAL</h4>
-        <p style="font-size: 0.65rem; opacity: 0.7; line-height: 1.4;">Streamlining digital growth for the 2025 creator ecosystem. v4.5.0 MASTER</p>
-        <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-            <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
-            <span style="font-size: 0.6rem; color: #10b981; font-weight: bold;">ALL SYSTEMS OPERATIONAL</span>
-        </div>
+    
+    <div class="content-card">
+        <h2 id="welcome-txt">WELCOME</h2>
+        <button onclick="logout()" style="background:none; color:white; border:1px solid grey; padding: 5px 10px; border-radius: 5px; cursor:pointer; font-size:0.6rem;">LOGOUT</button>
     </div>
 </div>
 
 <script>
     const MASTER_CODE = "2025";
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlqo-vMno8-nR0oqrqcRb_kcsw5iQ9vJjt_7aXZy73fPHZg1NKw3ReMxScADLz1TA/exec";
 
-    function filterTools() {
-        let input = document.getElementById('search-bar').value.toLowerCase();
-        let cards = document.querySelectorAll('.social-card');
-        let count = 0;
-        cards.forEach(card => {
-            if(card.innerText.toLowerCase().includes(input)) { card.style.display = "flex"; count++; }
-            else { card.style.display = "none"; }
-        });
-        document.getElementById('count-label').innerText = `Matching Tools: ${count}`;
+    // Auth Logic
+    function checkPass() { 
+        if (document.getElementById('pass-input').value === MASTER_CODE) login("Master Admin"); 
+        else alert("Invalid Code"); 
     }
 
-    function runTimer() {
-        const end = new Date("Dec 31, 2025 23:59:59").getTime();
-        const diff = end - new Date().getTime();
-        if (diff > 0) {
-            document.getElementById('d').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
-            document.getElementById('h').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-            document.getElementById('m').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-        }
-    }
-    setInterval(runTimer, 1000);
-
-    function checkPass() { if (document.getElementById('pass-input').value === MASTER_CODE) login("Admin", true); else alert("Invalid Code"); }
-    
     function handleGoogleLogin(response) {
-        const user = JSON.parse(atob(response.credential.split('.')[1]));
-        fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "log", name: user.name, email: user.email }) });
-        login(user.given_name, false);
+        // In a real app, you would verify the JWT token on your server
+        console.log("Encoded JWT ID token: " + response.credential);
+        login("Google User");
     }
 
-    function login(name, isAdmin) { 
-        localStorage.setItem('miuxo_session', JSON.stringify({ name, isAdmin, time: Date.now() })); 
+    function login(name) { 
+        localStorage.setItem('miuxo_session', JSON.stringify({ name, time: Date.now() })); 
         location.reload(); 
     }
-    
+
     function logout() { localStorage.removeItem('miuxo_session'); location.reload(); }
 
-    async function sync() {
-        document.getElementById('sync-loader').style.display = "flex";
-        try {
-            const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "sync" }) });
-            const data = await res.json();
-            const session = JSON.parse(localStorage.getItem('miuxo_session'));
-            if(session && session.isAdmin) {
-                document.getElementById('admin-panel').style.display = "block";
-                document.getElementById('user-count').innerText = `Total Registered Users: ${data.userCount}`;
-                let fbHtml = "";
-                data.feedbacks.reverse().slice(0, 3).forEach(f => { fbHtml += `<div style="background:rgba(0,0,0,0.3); padding:8px; margin-top:5px; border-radius:8px; text-align:left; font-size:0.7rem; border-left:3px solid gold;"><strong>${f[1]}</strong>: ${f[2]}</div>`; });
-                document.getElementById('admin-fb-list').innerHTML = fbHtml;
-            }
-        } catch(e) { console.warn("Database Syncing..."); }
-        finally { setTimeout(() => { document.getElementById('sync-loader').style.display = "none"; }, 800); }
+    // Search Logic
+    function filterTools() {
+        const input = document.getElementById('search-bar').value.toUpperCase();
+        const grid = document.getElementById('tool-grid');
+        const cards = grid.getElementsByClassName('social-card');
+        let visibleCount = 0;
+        for (let i = 0; i < cards.length; i++) {
+            const span = cards[i].getElementsByTagName('span')[0];
+            if (span.innerText.toUpperCase().indexOf(input) > -1) {
+                cards[i].style.display = ""; visibleCount++;
+            } else { cards[i].style.display = "none"; }
+        }
+        document.getElementById('count-label').innerText = `Available Tools: ${visibleCount}`;
     }
 
-    async function submitRequest() {
-        const t = document.getElementById('fb-topic').value, d = document.getElementById('fb-details').value;
-        if(!t || !d) return alert("Fill all fields");
-        await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "submitFeedback", topic: t, details: d }) });
-        alert("Success! Request logged.");
-        document.getElementById('fb-topic').value = ""; document.getElementById('fb-details').value = "";
+    function openGift() { 
+        document.getElementById('gift-sound').play().catch(e => {});
+        document.getElementById('gift-reveal').style.display = 'flex'; 
     }
 
     window.onload = () => {
@@ -224,10 +181,27 @@
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
             document.getElementById('welcome-txt').innerText = `WELCOME, ${s.name.toUpperCase()}`;
-            if(s.isAdmin) { document.getElementById('vip-section').style.display = "block"; sync(); }
         }
-        runTimer();
     };
+
+    // Snow logic
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let flakes = [];
+    function initSnow() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        flakes = [];
+        for(let i=0; i<100; i++) flakes.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*2+1, d:Math.random()+0.3});
+    }
+    function drawSnow() {
+        ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "white";
+        flakes.forEach(f => {
+            ctx.beginPath(); ctx.arc(f.x, f.y, f.s, 0, Math.PI*2); ctx.fill();
+            f.y += f.d; if(f.y > canvas.height) f.y = -10;
+        });
+        requestAnimationFrame(drawSnow);
+    }
+    initSnow(); drawSnow();
 </script>
 </body>
 </html>
