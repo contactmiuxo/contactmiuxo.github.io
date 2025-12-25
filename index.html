@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ᴍɪᴜxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
+    <title>ᴇᴄᴏʀᴇxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" id="status-bar-color" content="#2563eb">
@@ -43,32 +43,20 @@
 
         /* 📢 AUTO-SCROLLING NEWS TICKER */
         .announcement {
-            width: 100%; 
-            background: var(--banner-bg); 
-            color: white;
-            padding: 10px 0; 
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-            z-index: 100;
+            width: 100%; background: var(--banner-bg); color: white;
+            padding: 10px 0; overflow: hidden; white-space: nowrap;
+            position: relative; z-index: 100;
         }
 
         .ticker-content {
-            display: inline-block;
-            padding-left: 100%;
+            display: inline-block; padding-left: 100%;
             animation: ticker-scroll 25s linear infinite;
-            font-size: 0.85rem;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-size: 0.85rem; font-weight: bold; letter-spacing: 1px;
         }
 
         @keyframes ticker-scroll {
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
-        }
-
-        .announcement:hover .ticker-content {
-            animation-play-state: paused;
         }
 
         /* 🌓 THEME TOGGLE */
@@ -94,7 +82,7 @@
             text-align: center; backdrop-filter: var(--glass);
         }
 
-        input, textarea {
+        input {
             width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
             border: 1px solid var(--border); background: rgba(0,0,0,0.05);
             color: var(--text); outline: none; box-sizing: border-box;
@@ -107,13 +95,18 @@
 
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .gallery img { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
+
+        /* 📊 VISIT COUNTER STYLE */
+        .visitor-badge {
+            margin-top: 20px; opacity: 0.6; font-size: 0.7rem; letter-spacing: 1px;
+        }
     </style>
 </head>
 <body data-theme="dark">
 
 <div class="announcement" id="banner">
     <div class="ticker-content">
-        ✨ WELCOME TO THE NEW MIUXO BRAND HUB 2025 • OFFICIAL ASSETS UPDATED • NEW MEDIA CONTENT LIVE • CONTACT ADMIN FOR CUSTOM REQUESTS • JOIN OUR COMMUNITY ✨
+        ✨ WELCOME TO MIUXO HUB 2025 • VISITORS TRACKED LIVE • NEW MEDIA ASSETS UPDATED • THANK YOU FOR BEING PART OF OUR COMMUNITY ✨
     </div>
 </div>
 
@@ -150,6 +143,10 @@
             <img src="icon-192.png" alt="Asset 2">
         </div>
     </div>
+
+    <div class="visitor-badge">
+        HUB VISITS: <img src="https://hitwebcounter.com/counter/counter.php?page=miuxo_hub_2025&style=0006&nbdigits=5&type=page&initCount=0" title="Free Counter" Alt="web counter" border="0" style="vertical-align: middle; filter: grayscale(1) invert(1);">
+    </div>
 </div>
 
 <script>
@@ -160,8 +157,6 @@
         const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         body.setAttribute('data-theme', newTheme);
         localStorage.setItem('miuxo_theme', newTheme);
-        
-        // Sync status bar
         const metaColor = newTheme === 'dark' ? '#0f172a' : '#f1f5f9';
         document.getElementById('status-bar-color').setAttribute('content', metaColor);
     }
