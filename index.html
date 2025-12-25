@@ -196,9 +196,14 @@
     </div>
 
 <div class="content-card">
-    <h3>🌐 CONNECT & SHOP</h3>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px;">
+    <h3>🌐 MIUXO ECOSYSTEM</h3>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 15px;">
         
+        <style>
+            .social-card { width: calc(33.33% - 8px); min-width: 90px; }
+            @media (max-width: 360px) { .social-card { width: calc(50% - 6px); } }
+        </style>
+
         <a href="https://discord.com/invite/2rcKEjsVwV" target="_blank" class="social-card">
             <div style="font-size:1.5rem;">💬</div>
             <span style="font-size:0.6rem;">DISCORD</span>
@@ -214,13 +219,29 @@
             <span style="font-size:0.6rem;">YOUTUBE</span>
         </a>
 
+        <a href="https://miuxo.in/" target="_blank" class="social-card" style="border: 1px solid var(--accent);">
+            <div style="font-size:1.5rem;">🌐</div>
+            <span style="font-size:0.6rem;">MIUXO.IN</span>
+        </a>
+
         <a href="https://www.shopify.com/" target="_blank" class="social-card" style="border: 1px solid #95bf47;">
             <div style="font-size:1.5rem;">🛍️</div>
-            <span style="font-size:0.6rem; color: #95bf47;">OFFICIAL STORE</span>
+            <span style="font-size:0.6rem;">STORE</span>
+        </a>
+
+        <a href="https://replit.com/" target="_blank" class="social-card" style="border: 1px solid #f26207;">
+            <div style="font-size:1.5rem;">🌀</div>
+            <span style="font-size:0.6rem;">REPLIT</span>
+        </a>
+
+        <a href="https://www.veed.io/" target="_blank" class="social-card" style="border: 1px solid #343434; background: rgba(0,0,0,0.2);">
+            <div style="font-size:1.5rem;">📽️</div>
+            <span style="font-size:0.6rem;">VEED.IO</span>
         </a>
         
     </div>
-</div>    
+</div>
+   
     <div class="content-card">
         <h3>📩 ASSET REQUEST</h3>
         <input type="text" id="feedback-topic" placeholder="Asset Name">
