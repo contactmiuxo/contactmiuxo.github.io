@@ -26,6 +26,7 @@
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
+        /* 🔐 Glassmorphism Login Overlay */
         #login-overlay {
             position: fixed; inset: 0; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
@@ -43,17 +44,22 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
-        input {
-            width: 100%; padding: 14px; margin: 15px 0; border-radius: 12px;
+        input, textarea {
+            width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05);
-            color: white; text-align: center; font-size: 1rem; outline: none;
+            color: white; text-align: center; font-size: 1rem; outline: none; box-sizing: border-box;
         }
 
-        #unlock-btn {
+        textarea { text-align: left; font-family: inherit; resize: none; }
+
+        #unlock-btn, .action-btn {
             width: 100%; padding: 14px; border-radius: 12px; border: none;
-            background: white; color: #2563eb; font-weight: 700; cursor: pointer;
+            background: white; color: #2563eb; font-weight: 700; cursor: pointer; transition: 0.3s;
         }
 
+        .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* 📦 Main Content */
         .container { display: none; width: 100%; max-width: 400px; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -62,12 +68,12 @@
             border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center;
         }
 
-        /* Gallery Grid */
-        .gallery {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;
-        }
-        .gallery img {
-            width: 100%; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .gallery-item img { width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 8px; }
+        
+        .download-btn {
+            background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+            width: 100%; border-radius: 8px; font-size: 0.75rem; padding: 8px; cursor: pointer;
         }
     </style>
 </head>
@@ -77,14 +83,18 @@
     <div class="glass-card">
         <h2 style="letter-spacing: 2px;">🔐 MIUXO ACCESS</h2>
         <p style="opacity: 0.8; font-size: 0.9rem;">PLEASE ENTER YOUR CODE</p>
+        
         <input type="password" id="pass-input" placeholder="••••••••">
         <button onclick="checkPass()" id="unlock-btn">UNLOCK HUB</button>
+
         <div style="margin: 20px 0; opacity: 0.5;">OR</div>
+
         <div id="g_id_onload"
              data-client_id="785119101330-8c05o9segra6q23qvfh8qb5c3qdaobh7.apps.googleusercontent.com"
              data-callback="handleGoogleLogin">
         </div>
         <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-size="large" data-width="100%"></div>
+        
         <p id="error-msg" style="color: #ff9494; display: none; margin-top: 15px; font-weight: bold;">Invalid Access Code</p>
     </div>
 </div>
@@ -96,27 +106,40 @@
         <button onclick="logout()" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer;">LOGOUT SESSION</button>
     </div>
 
-<div class="content-card">
+    <div class="content-card">
+        <h3 style="margin-top:0;">🎥 FEATURED MEDIA</h3>
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; background: #000;">
+            <iframe src="https://www.youtube.com/embed/u28pkQXq67k" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <div class="content-card">
         <h3>✨ MEMBER GALLERY</h3>
-        <div class="gallery" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <img src="icon-512.png" alt="Asset 1" style="width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                <a href="icon-512.png" download="Miuxo_Asset_HQ.png">
-                    <button style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 100%; border-radius: 8px; font-size: 0.75rem; padding: 8px; cursor: pointer;">📥 Download</button>
-                </a>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="icon-512.png" alt="HQ Asset">
+                <a href="icon-512.png" download><button class="download-btn">📥 Save HQ</button></a>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <img src="icon-192.png" alt="Asset 2" style="width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                <a href="icon-192.png" download="Miuxo_Asset_Mobile.png">
-                    <button style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 100%; border-radius: 8px; font-size: 0.75rem; padding: 8px; cursor: pointer;">📥 Download</button>
-                </a>
+            <div class="gallery-item">
+                <img src="icon-192.png" alt="Mobile Asset">
+                <a href="icon-192.png" download><button class="download-btn">📥 Save App</button></a>
             </div>
         </div>
-        <p style="font-size: 0.8rem; margin-top: 10px; opacity: 0.6;">Tap 'Download' to save brand assets.</p>
     </div>
-    
-    <div class="content-card" style="border: 1px dashed var(--accent);">
-        <p style="font-size: 0.8rem;">📱 ɪɴꜱᴛᴀʟʟ ᴀꜱ ᴀᴘᴘ: ᴛᴀᴘ ꜱʜᴀʀᴇ, ᴛʜᴇɴ 'ᴀᴅᴅ ᴛᴏ ʜᴏᴍᴇ ꜱᴄʀᴇᴇɴ'</p>
+
+    <div class="content-card">
+        <h3>✉️ CONTACT ADMIN</h3>
+        <form action="mailto:contecorexo@gmail.com" method="post" enctype="text/plain">
+            <input type="text" name="name" placeholder="Your Name" required style="text-align: left;">
+            <textarea name="message" placeholder="How can we help?" rows="3" required></textarea>
+            <button type="submit" class="action-btn" style="background: var(--accent); color: white;">SEND MESSAGE</button>
+        </form>
+    </div>
+
+    <div class="content-card" style="border: 1px dashed var(--accent); background: none;">
+        <p style="font-size: 0.8rem; margin: 0;">📱 ɪɴꜱᴛᴀʟʟ ᴀꜱ ᴀᴘᴘ: ᴛᴀᴘ ꜱʜᴀʀᴇ, ᴛʜᴇɴ 'ᴀᴅᴅ ᴛᴏ ʜᴏᴍᴇ ꜱᴄʀᴇᴇɴ'</p>
     </div>
 </div>
 
@@ -126,8 +149,11 @@
 
     function checkPass() {
         const input = document.getElementById('pass-input').value;
-        if (input === MASTER_CODE) { startSession("Member"); } 
-        else { document.getElementById('error-msg').style.display = 'block'; }
+        if (input === MASTER_CODE) {
+            startSession("Member");
+        } else {
+            document.getElementById('error-msg').style.display = 'block';
+        }
     }
 
     function handleGoogleLogin(response) {
@@ -159,12 +185,9 @@
         }
     };
 
-    // --- SERVICE WORKER REGISTRATION ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('PWA Active'))
-                .catch(err => console.log('PWA Failed', err));
+            navigator.serviceWorker.register('./sw.js');
         });
     }
 </script>
