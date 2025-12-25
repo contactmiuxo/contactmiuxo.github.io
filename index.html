@@ -42,7 +42,7 @@
             overflow-x: hidden;
         }
 
-        /* 🎬 SPLASH SCREEN STYLES */
+        /* 🎬 SPLASH SCREEN */
         #splash-screen {
             position: fixed; inset: 0; background: var(--bg-gradient);
             display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -59,7 +59,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* ❄️ SNOW CANVAS */
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
         /* 📢 TICKER */
@@ -75,7 +74,6 @@
         }
         @keyframes ticker-scroll { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        /* 🌓 THEME TOGGLE */
         .theme-toggle {
             position: fixed; top: 55px; right: 20px;
             background: var(--card-bg); border: 1px solid var(--border);
@@ -84,7 +82,6 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* 🔐 LOGIN OVERLAY */
         #login-overlay {
             position: fixed; inset: 0; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
@@ -98,14 +95,13 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
-        input {
-            width: 100%; padding: 14px; margin: 15px 0; border-radius: 12px;
+        input, textarea {
+            width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
             border: 1px solid var(--border); background: rgba(255,255,255,0.05);
-            color: var(--text); outline: none; box-sizing: border-box; font-size: 1rem;
-            text-align: center;
+            color: var(--text); outline: none; box-sizing: border-box; font-size: 0.95rem;
+            text-align: center; font-family: inherit;
         }
         
-        /* 🚀 PREMIUM BUTTONS */
         .action-btn {
             width: 100%; padding: 14px; border-radius: 12px; border: none;
             background: var(--accent); color: white; font-weight: 700; cursor: pointer; transition: 0.3s;
@@ -124,14 +120,12 @@
             100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.1); }
         }
 
-        .forgot-link { font-size: 0.75rem; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 15px; display: block; }
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .gallery img { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
         .visitor-badge { margin-top: 20px; opacity: 0.6; font-size: 0.7rem; }
 
-        /* 📜 CHANGELOG STYLES */
-        .version-item { text-align: left; margin-bottom: 15px; border-left: 2px solid var(--border); padding-left: 15px; }
-        .version-latest { border-left-color: var(--accent); }
+        /* 📜 CHANGELOG STYLE */
+        .version-item { text-align: left; margin-bottom: 12px; border-left: 2px solid var(--border); padding-left: 12px; }
     </style>
 </head>
 <body data-theme="dark">
@@ -159,21 +153,14 @@
         <div id="login-box">
             <input type="password" id="pass-input" placeholder="••••••••" autofocus>
             <button onclick="checkPass()" class="action-btn">UNLOCK HUB</button>
-            <span class="forgot-link" onclick="showRecovery()">Forgot Code?</span>
+            <span style="font-size:0.75rem; color:var(--accent); cursor:pointer; display:block; margin-top:15px;" onclick="showRecovery()">Forgot Code?</span>
         </div>
 
         <div id="recovery-box" style="display:none;">
             <p style="font-size: 0.85rem; margin-bottom: 20px;">Contact the administrator for the 2025 Master Key.</p>
             <button onclick="window.location.href='mailto:shammas78099@gmail.com'" class="action-btn" style="background:#475569;">EMAIL SUPPORT</button>
-            <span class="forgot-link" onclick="hideRecovery()">Return to Login</span>
+            <span style="font-size:0.75rem; color:var(--accent); cursor:pointer; display:block; margin-top:15px;" onclick="hideRecovery()">Return to Login</span>
         </div>
-
-        <div style="margin:20px 0; display: flex; align-items: center; gap: 10px; opacity: 0.3;">
-            <hr style="flex:1; border:0; border-top:1px solid var(--text);"> OR <hr style="flex:1; border:0; border-top:1px solid var(--text);">
-        </div>
-
-        <div id="g_id_onload" data-client_id="YOUR_GOOGLE_ID" data-callback="handleGoogleLogin"></div>
-        <div class="g_id_signin" data-type="standard" data-theme="filled_blue"></div>
     </div>
 </div>
 
@@ -185,60 +172,51 @@
     </div>
 
     <div class="content-card">
-        <h3>🎥 FEATURED MEDIA</h3>
-        <div style="position:relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; background: #000;">
-            <iframe src="https://www.youtube.com/embed/u28pkQXq67k" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+        <h3 style="font-size:0.9rem;">📜 VERSION HISTORY</h3>
+        <div style="max-height: 120px; overflow-y: auto;">
+            <div class="version-item" style="border-left-color: var(--accent);">
+                <strong style="font-size:0.8rem;">v1.2.5 - Latest</strong>
+                <p style="font-size:0.7rem; margin:2px 0; opacity:0.7;">Added Community Feedback & Animation Engine.</p>
+            </div>
+            <div class="version-item" style="opacity:0.5;">
+                <strong style="font-size:0.8rem;">v1.1.0</strong>
+                <p style="font-size:0.7rem; margin:2px 0;">PWA Support & Master Code Security.</p>
+            </div>
         </div>
     </div>
 
     <div class="content-card">
         <h3>✨ ASSET REPOSITORY</h3>
         <div class="gallery">
-            <img src="icon-512.png" alt="Logo High Res">
-            <img src="icon-192.png" alt="App Icon">
+            <img src="icon-512.png" alt="Logo">
+            <img src="icon-192.png" alt="Icon">
         </div>
-        <button onclick="downloadAll()" class="action-btn" style="background:transparent; border:2px solid var(--accent); color:var(--text); margin-top:15px;">📦 DOWNLOAD ALL ASSETS</button>
+        <button onclick="downloadAll()" class="action-btn" style="background:transparent; border:2px solid var(--accent); color:var(--text); margin-top:15px;">📦 DOWNLOAD ALL</button>
     </div>
 
     <div class="content-card">
-        <h3>📜 VERSION HISTORY</h3>
-        <div style="max-height: 180px; overflow-y: auto; padding-right: 10px;">
-            <div class="version-item version-latest">
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
-                    <strong style="color:var(--accent)">v1.2.0 (LIVE)</strong>
-                    <span style="opacity:0.5">Dec 2025</span>
-                </div>
-                <p style="font-size:0.75rem; margin:5px 0; opacity:0.8;">Integrated Splash Animation & Version Tracking.</p>
-            </div>
-            <div class="version-item" style="opacity:0.5">
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
-                    <strong>v1.1.0</strong>
-                    <span>Nov 2025</span>
-                </div>
-                <p style="font-size:0.75rem; margin:5px 0;">Added Master Code security & PWA engine.</p>
-            </div>
-        </div>
+        <h3>📩 ASSET REQUEST</h3>
+        <input type="text" id="feedback-topic" placeholder="What asset do you need?" style="text-align:left; padding-left:15px; font-size:0.85rem;">
+        <textarea id="feedback-details" placeholder="Describe style/size..." style="height:80px; text-align:left; padding:12px; font-size:0.85rem; resize:none;"></textarea>
+        <button onclick="sendFeedback()" class="action-btn">SUBMIT REQUEST</button>
     </div>
 
     <div class="visitor-badge">
-        HUB VISITS: <img src="https://hitwebcounter.com/counter/counter.php?page=miuxo_hub_2025&style=0006&nbdigits=5&type=page&initCount=0" title="Counter" Alt="counter" border="0" style="vertical-align: middle; filter: grayscale(1) invert(1);">
+        HUB VISITS: <img src="https://hitwebcounter.com/counter/counter.php?page=miuxo_hub_2025&style=0006&nbdigits=5&type=page&initCount=0" border="0" style="vertical-align: middle; filter: grayscale(1) invert(1);">
     </div>
 </div>
 
 <script>
     const MASTER_CODE = "MIUXO2025";
     
-    // --- 📱 PWA SERVICE WORKER ---
+    // PWA
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
     }
 
-    // --- 🗓️ HOLIDAY LOGIC ---
+    // HOLIDAY LOGIC
     const isHolidaySeason = new Date() < new Date("January 2, 2026");
 
-    // --- 🌓 THEME ---
     function toggleTheme() {
         const body = document.body;
         const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -247,7 +225,6 @@
     }
     document.body.setAttribute('data-theme', localStorage.getItem('miuxo_theme') || 'dark');
 
-    // --- ❄️ SNOWFALL ---
     if (isHolidaySeason) {
         const canvas = document.getElementById('snow-canvas');
         const ctx = canvas.getContext('2d');
@@ -255,38 +232,30 @@
         function init() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; flakes=Array.from({length:100},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*3+1,d:Math.random()*1})); }
         function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle=document.body.getAttribute('data-theme')==='dark'?'white':'rgba(0,0,0,0.2)'; ctx.beginPath(); flakes.forEach(f=>{ctx.moveTo(f.x,f.y);ctx.arc(f.x,f.y,f.r,0,Math.PI*2,true);f.y+=Math.cos(f.d)+1+f.r/2;f.x+=Math.sin(f.d)*2;if(f.y>h){f.y=-10;f.x=Math.random()*w;}});ctx.fill();requestAnimationFrame(draw);}
         window.addEventListener('resize', init); init(); draw();
-    } else { 
-        document.getElementById('snow-canvas').style.display='none';
-    }
+    } else { document.getElementById('snow-canvas').style.display='none'; }
 
-    // --- 🎬 REVEAL ANIMATION ENGINE ---
     function triggerReveal(name) {
         document.getElementById('login-overlay').style.display = 'none';
         const splash = document.getElementById('splash-screen');
         splash.style.display = 'flex';
-        
         setTimeout(() => {
             splash.style.opacity = '0';
             splash.style.transition = 'opacity 0.8s ease';
-            setTimeout(() => {
-                splash.style.display = 'none';
-                startSession(name);
-            }, 800);
+            setTimeout(() => { splash.style.display = 'none'; startSession(name); }, 800);
         }, 2000);
     }
 
-    // --- 🔑 AUTH ENGINE ---
     function checkPass() {
         const input = document.getElementById('pass-input').value;
         if (input === MASTER_CODE) triggerReveal("Member");
         else { alert("Incorrect Master Code"); document.getElementById('pass-input').value = ""; }
     }
-    function handleGoogleLogin(response) { triggerReveal(JSON.parse(atob(response.credential.split('.')[1])).given_name); }
-    
+
     function startSession(name) {
         localStorage.setItem('miuxo_session', JSON.stringify({ auth: true, user: name, time: Date.now() }));
         showHub(name);
     }
+
     function showHub(name) {
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
@@ -295,20 +264,26 @@
 
     function logout() { localStorage.removeItem('miuxo_session'); location.reload(); }
 
+    function sendFeedback() {
+        const topic = document.getElementById('feedback-topic').value;
+        const details = document.getElementById('feedback-details').value;
+        if (!topic || !details) { alert("Please fill in both fields."); return; }
+        window.location.href = `mailto:shammas78099@gmail.com?subject=Miuxo Request: ${topic}&body=${details}`;
+    }
+
     function downloadAll() {
         ['icon-512.png', 'icon-192.png'].forEach((url, i) => {
             setTimeout(() => { const a=document.createElement('a'); a.href=url; a.download=url; a.click(); }, i*500);
         });
     }
 
-    // --- SESSION PERSISTENCE ---
     window.onload = () => {
         const session = JSON.parse(localStorage.getItem('miuxo_session'));
         if (session && (Date.now() - session.time < 86400000)) showHub(session.user);
     };
 
-    function showRecovery() { document.getElementById('login-box').style.display = 'none'; document.getElementById('recovery-box').style.display = 'block'; document.getElementById('login-title').innerText = "🔑 RECOVERY"; }
-    function hideRecovery() { document.getElementById('login-box').style.display = 'block'; document.getElementById('recovery-box').style.display = 'none'; document.getElementById('login-title').innerText = "🔐 MIUXO ACCESS"; }
+    function showRecovery() { document.getElementById('login-box').style.display='none'; document.getElementById('recovery-box').style.display='block'; }
+    function hideRecovery() { document.getElementById('login-box').style.display='block'; document.getElementById('recovery-box').style.display='none'; }
 </script>
 </body>
 </html>
