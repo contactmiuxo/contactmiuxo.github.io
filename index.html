@@ -1,44 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My First Web Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ᴍɪᴜxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
-        /* CSS: This makes the page look nice */
-        body {
-            font-family: sans-serif;
-            text-align: center;
-            padding-top: 50px;
-            background-color: #f0f2f5;
+        :root {
+            --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --card-bg: #1e2533; 
+            --text: #f8fafc;
+            --accent: #2563eb;
+            --border: rgba(255, 255, 255, 0.1);
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
+
+        body { 
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: var(--text);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
-        button:hover {
-            background-color: #0056b3;
+
+        /* 🖼️ Profile UI */
+        #user-profile {
+            position: fixed; top: 55px; left: 20px;
+            display: none; align-items: center; gap: 10px;
+            z-index: 10001; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 30px;
         }
+        #user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent); }
+
+        .announcement {
+            width: 100%; background: var(--accent); color: white;
+            padding: 10px 0; overflow: hidden; white-space: nowrap;
+        }
+        .ticker-content {
+            display: inline-block; padding-left: 100%;
+            animation: ticker-scroll 25s linear infinite;
+            font-size: 0.85rem; font-weight: bold;
+        }
+        @keyframes ticker-scroll { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        /* 🔐 Login Overlay */
+        #login-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center; background: #0f172a;
+        }
+        .content-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 28px; padding: 40px; margin-bottom: 20px;
+            text-align: center; width: 350px;
+        }
+
+        input, textarea {
+            width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
+            border: 1px solid var(--border); background: rgba(255,255,255,0.05);
+            color: white; font-family: inherit; text-align: center;
+        }
+        
+        .action-btn {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            background: var(--accent); color: white; font-weight: 700; cursor: pointer;
+        }
+
+        .divider { margin: 25px 0; display: flex; align-items: center; gap: 10px; opacity: 0.3; }
+        .divider hr { flex: 1; border: 0; border-top: 1px solid white; }
+
+        .admin-panel { border: 1px dashed #ef4444 !important; background: rgba(239, 68, 68, 0.05) !important; display: none; }
+        .container { display: none; width: 100%; max-width: 400px; padding: 20px; }
     </style>
 </head>
 <body>
 
-    <h1>Hello, World!</h1>
-    <p>Click the button below to see JavaScript in action.</p>
-    
-    <button onclick="changeText()">Click Me!</button>
+<div id="user-profile">
+    <img id="user-avatar" src="" alt="User">
+    <span id="user-name-label" style="font-size: 0.7rem; font-weight: bold;"></span>
+</div>
 
-    <script>
-        // JavaScript: This adds interactivity
-        function changeText() {
-            const heading = document.querySelector('h1');
-            heading.textContent = "You clicked the button!";
-            heading.style.color = "green";
+<div class="announcement">
+    <div class="ticker-content" id="live-ticker">🎄 MIUXO HOLIDAY HUB 2025 • OFFICIAL BRAND REPOSITORY ✨</div>
+</div>
+
+<div id="login-overlay">
+    <div class="content-card">
+        <h2>🔐 MIUXO ACCESS</h2>
+        <p style="font-size: 0.8rem; opacity: 0.5;">Master Code or Google Login</p>
+        
+        <input type="password" id="pass-input" placeholder="••••••••">
+        <button onclick="checkPass()" class="action-btn">UNLOCK HUB</button>
+
+        <div class="divider"><hr><span>OR</span><hr></div>
+
+        <div id="g_id_onload"
+             data-client_id="785119101330-8c05o9segra6q23qvfh8qb5c3qdaobh7.apps.googleusercontent.com"
+             data-callback="handleGoogleLogin">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-theme="filled_blue" data-size="large" data-width="270"></div>
+    </div>
+</div>
+
+<div class="container" id="main-content">
+    <div class="content-card">
+        <h2 id="welcome-msg">WELCOME</h2>
+        <button onclick="logout()" style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:0.75rem;">LOGOUT</button>
+    </div>
+
+    <div class="content-card admin-panel" id="admin-tools">
+        <h3 style="color: #ef4444; font-size: 0.8rem;">🛠️ ADMIN TERMINAL</h3>
+        <input type="text" id="new-ticker" placeholder="New Ticker Text">
+        <textarea id="new-news" placeholder="New News Content"></textarea>
+        <button onclick="updateHubData()" class="action-btn" style="background: #ef4444;">PUSH UPDATES</button>
+    </div>
+
+    <div class="content-card">
+        <h3 style="color: var(--accent);">📢 LATEST UPDATES</h3>
+        <p id="news-display" style="font-size: 0.85rem; text-align: left; white-space: pre-line;">
+            • 2026 Roadmap published.
+            • Google Login enabled.
+        </p>
+    </div>
+</div>
+
+<script>
+    const MASTER_CODE = "MIUXO2025";
+    const ADMIN_EMAIL = "shammas78099@gmail.com"; 
+
+    function handleGoogleLogin(response) {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        
+        // Show Profile Info
+        document.getElementById('user-profile').style.display = 'flex';
+        document.getElementById('user-avatar').src = payload.picture;
+        document.getElementById('user-name-label').innerText = payload.given_name.toUpperCase();
+        
+        // Check for Admin status
+        if(payload.email === ADMIN_EMAIL) {
+            document.getElementById('admin-tools').style.display = 'block';
         }
-    </script>
+        
+        triggerReveal(payload.given_name);
+    }
 
+    function checkPass() {
+        if (document.getElementById('pass-input').value === MASTER_CODE) {
+            document.getElementById('admin-tools').style.display = 'block'; 
+            triggerReveal("Member");
+        } else {
+            alert("Wrong Code");
+        }
+    }
+
+    function triggerReveal(name) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        document.getElementById('welcome-msg').innerText = `WELCOME, ${name.toUpperCase()}`;
+        localStorage.setItem('miuxo_session', JSON.stringify({auth: true, user: name, time: Date.now()}));
+    }
+
+    function updateHubData() {
+        const t = document.getElementById('new-ticker').value;
+        const n = document.getElementById('new-news').value;
+        if(t) { localStorage.setItem('miuxo_ticker', t); document.getElementById('live-ticker').innerText = t; }
+        if(n) { localStorage.setItem('miuxo_news', n); document.getElementById('news-display').innerText = n; }
+        alert("Updated!");
+    }
+
+    function logout() { localStorage.clear(); location.reload(); }
+
+    window.onload = () => {
+        const t = localStorage.getItem('miuxo_ticker');
+        const n = localStorage.getItem('miuxo_news');
+        if(t) document.getElementById('live-ticker').innerText = t;
+        if(n) document.getElementById('news-display').innerText = n;
+        
+        const session = JSON.parse(localStorage.getItem('miuxo_session'));
+        if (session) triggerReveal(session.user);
+    };
+</script>
 </body>
 </html>
