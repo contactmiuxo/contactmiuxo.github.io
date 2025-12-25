@@ -1,10 +1,10 @@
-const CACHE_NAME = 'miuxo-cache-v1';
+const CACHE_NAME = 'miuxo-cache-v1.2.5';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+  './',
+  './index.html',
+  './icon-192.png',
+  './icon-512.png',
+  './manifest.json'
 ];
 
 // Install Service Worker and Cache Assets
@@ -25,38 +25,13 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker Registered'))
-            .catch(err => console.log('Service Worker Failed', err));
-    });
-}
-
-const CACHE_NAME = 'miuxo-cache-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
-];
-
-// Install Service Worker and Cache Assets
-self.addEventListener('install', (event) => {
+// Activate and Clean Old Caches
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
-  );
-});
-
-// Serve Assets from Cache when Offline
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+      );
     })
   );
 });
