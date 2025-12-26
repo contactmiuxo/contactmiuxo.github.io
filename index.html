@@ -57,13 +57,14 @@
         .container { display: none; width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
         #login-overlay { position: fixed; inset: 0; background: var(--bg-gradient); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         
-        /* Secret effects */
         #welcome-txt, #login-title { cursor: pointer; user-select: none; }
         .admin-hold { animation: pulse 0.6s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; color: var(--vip-gold); } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
+
+<audio id="login-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
 
 <canvas id="snow-canvas"></canvas>
 <div class="miuxo-banner">✨ HAPPY NEW YEAR 2026! THE FUTURE IS MIUXO ✨</div>
@@ -97,14 +98,14 @@
 </div>
 
 <div class="ticker-wrap" id="ticker-box" style="display: none;">
-    <div class="ticker" id="ticker-text">🚀 WELCOME TO MIUXO HUB v2.5</div>
+    <div class="ticker" id="ticker-text">🚀 WELCOME TO MIUXO HUB v2.6</div>
 </div>
 
 <script>
     const MASTER_CODE = "2025";
     let pressTimer;
 
-    // --- EMERGENCY OFF BUTTON (Login Screen) ---
+    // --- EMERGENCY OFF TRIGGER ---
     const loginTitle = document.getElementById('login-title');
     const startEmergency = () => {
         loginTitle.classList.add('admin-hold');
@@ -118,45 +119,19 @@
         }, 5000); 
     };
     const endEmergency = () => { loginTitle.classList.remove('admin-hold'); clearTimeout(pressTimer); };
-    
     loginTitle.onmousedown = startEmergency; loginTitle.onmouseup = endEmergency;
     loginTitle.ontouchstart = startEmergency; loginTitle.ontouchend = endEmergency;
 
-    // --- HUB LOGIC ---
-    function trackClick(name) {
-        let s = JSON.parse(localStorage.getItem('miuxo_stats')) || {};
-        s[name] = (s[name] || 0) + 1;
-        localStorage.setItem('miuxo_stats', JSON.stringify(s));
-    }
-
-    function showAdminMenu() {
-        const stats = JSON.parse(localStorage.getItem('miuxo_stats')) || {};
-        let dataStr = Object.entries(stats).map(([k,v])=>`${k}: ${v}`).join("\n");
-        let cmd = prompt(`📊 STATS:\n${dataStr || 'No data'}\n\nCOMMANDS:\n'LOCK' (Toggle Maint)\n'NEWS' (Update Ticker)\n'RESET' (Clear Stats)`);
-        
-        if(!cmd) return;
-        cmd = cmd.toUpperCase();
-        if(cmd === 'LOCK') {
-            const cur = localStorage.getItem('miuxo_maint') === 'true';
-            localStorage.setItem('miuxo_maint', !cur);
-            alert(`Maintenance set to: ${!cur}`);
-            location.reload();
-        } else if(cmd === 'NEWS') {
-            let m = prompt("New Message:");
-            if(m) { localStorage.setItem('miuxo_news', m); location.reload(); }
-        } else if(cmd === 'RESET') {
-            localStorage.removeItem('miuxo_stats');
-            location.reload();
-        }
-    }
-
+    // --- FUNCTIONS ---
     function checkPass() {
         if(localStorage.getItem('miuxo_maint') === 'true') {
-            alert("⚠️ SYSTEM UNDER MAINTENANCE\n(Admin: Hold 'HUB ACCESS' title to bypass)");
+            alert("⚠️ SYSTEM UNDER MAINTENANCE\n(Hold 'HUB ACCESS' title for 5s to bypass)");
             return;
         }
-        if (document.getElementById('pass-input').value === MASTER_CODE) login("Master Admin");
-        else alert("Invalid Code");
+        if (document.getElementById('pass-input').value === MASTER_CODE) {
+            document.getElementById('login-sound').play(); // Play sound
+            setTimeout(() => login("Master Admin"), 300); // Small delay for sound to start
+        } else alert("Invalid Code");
     }
 
     function login(name) {
@@ -180,8 +155,19 @@
         if(savedNews) document.getElementById('ticker-text').innerText = savedNews;
     }
 
-    function logout() { localStorage.removeItem('miuxo_session'); location.reload(); }
+    function showAdminMenu() {
+        const stats = JSON.parse(localStorage.getItem('miuxo_stats')) || {};
+        let dataStr = Object.entries(stats).map(([k,v])=>`${k}: ${v}`).join("\n");
+        let cmd = prompt(`📊 STATS:\n${dataStr || 'No data'}\n\nCOMMANDS:\n'LOCK', 'NEWS', 'RESET'`);
+        if(!cmd) return;
+        cmd = cmd.toUpperCase();
+        if(cmd === 'LOCK') { localStorage.setItem('miuxo_maint', 'true'); logout(); }
+        else if(cmd === 'NEWS') { let m = prompt("New Message:"); if(m) { localStorage.setItem('miuxo_news', m); location.reload(); } }
+        else if(cmd === 'RESET') { localStorage.removeItem('miuxo_stats'); location.reload(); }
+    }
 
+    function logout() { localStorage.removeItem('miuxo_session'); location.reload(); }
+    
     function toggleTheme() {
         const body = document.body;
         const theme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -196,7 +182,27 @@
         document.getElementById('theme-icon').innerText = t === 'light' ? '☀️' : '🌙';
         const s = JSON.parse(localStorage.getItem('miuxo_session'));
         if (s && (Date.now() - s.time < 86400000)) showHub(s.name);
+        initSnow(); drawSnow();
     };
+
+    // --- SNOW LOGIC ---
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let flakes = [];
+    function initSnow() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        flakes = [];
+        for(let i=0; i<100; i++) flakes.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*2+1, d:Math.random()+0.3});
+    }
+    function drawSnow() {
+        ctx.clearRect(0,0,canvas.width,canvas.height); 
+        ctx.fillStyle = document.body.getAttribute('data-theme') === 'light' ? "rgba(0,0,0,0.1)" : "white";
+        flakes.forEach(f => {
+            ctx.beginPath(); ctx.arc(f.x, f.y, f.s, 0, Math.PI*2); ctx.fill();
+            f.y += f.d; if(f.y > canvas.height) f.y = -10;
+        });
+        requestAnimationFrame(drawSnow);
+    }
 </script>
 </body>
 </html>
