@@ -10,6 +10,7 @@
             --standard-blue: #2563eb;
             --vip-gold: #fbbf24;
             --panic-red: #ef4444;
+            --online-green: #22c55e;
             --glass: blur(25px);
             --card-bg: rgba(15, 23, 42, 0.8);
             --border: rgba(255, 255, 255, 0.1);
@@ -61,7 +62,7 @@
         }
 
         .social-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
             gap: 12px; width: 100%; margin-top: 10px;
         }
 
@@ -69,10 +70,20 @@
             background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px 5px; 
             text-decoration: none; color: white; display: flex; flex-direction: column; 
             align-items: center; transition: 0.3s ease; text-align: center; border: 1px solid var(--border);
+            position: relative; overflow: hidden;
         }
 
         .social-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.1); }
         .social-card div { font-size: 1.4rem; margin-bottom: 5px; }
+
+        /* STATUS INDICATORS */
+        .status-dot {
+            width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px;
+            background: var(--online-green); box-shadow: 0 0 5px var(--online-green);
+        }
+        .status-down { background: var(--panic-red) !important; box-shadow: 0 0 5px var(--panic-red) !important; }
+        .pulse { animation: pulse-status 2s infinite; }
+        @keyframes pulse-status { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         #panic-btn {
             display: none; position: fixed; bottom: 20px; right: 20px;
@@ -208,13 +219,14 @@
             updateVisitorCount();
             document.getElementById('login-sound').play();
             renderTools(TOOLS);
+            checkSystemStatus(); // Simulated ping check
             
             if(key === VIP_CODE) {
                 sessionTag.innerText = "👑 VIP GOLD SESSION";
                 sessionTag.style.color = "var(--vip-gold)";
                 hubFrame.classList.add('vip-theme');
                 document.getElementById('panic-btn').style.display = 'block';
-                visitorStat.style.display = 'block'; // Only show stats for VIP
+                visitorStat.style.display = 'block'; 
             } else {
                 sessionTag.innerText = "👤 NORMAL SESSION";
                 sessionTag.style.color = "#3b82f6";
@@ -226,10 +238,27 @@
         } else { alert("INVALID ACCESS CODE"); }
     }
 
+    // SIMULATED PING SYSTEM
+    function checkSystemStatus() {
+        const cards = document.querySelectorAll('.status-dot');
+        cards.forEach(dot => {
+            // Randomly simulate a "down" tool (5% chance) or keep all up
+            const isDown = Math.random() < 0.05; 
+            if(isDown) {
+                dot.classList.add('status-down');
+                dot.parentElement.title = "Connection Unstable";
+            }
+        });
+    }
+
     function renderTools(list) {
         document.getElementById('tool-grid').innerHTML = list.map(t => `
             <a href="${t.url}" target="_blank" class="social-card" style="border: 1px solid ${t.border}">
-                <div>${t.icon}</div><span style="font-size:0.6rem; font-weight:800">${t.name}</span>
+                <div>${t.icon}</div>
+                <div style="display:flex; align-items:center;">
+                    <span class="status-dot pulse"></span>
+                    <span style="font-size:0.6rem; font-weight:800; letter-spacing:0.5px;">${t.name}</span>
+                </div>
             </a>`).join('');
     }
 
@@ -237,6 +266,7 @@
         const val = document.getElementById('search-bar').value.toUpperCase();
         const filtered = TOOLS.filter(t => t.name.includes(val));
         renderTools(filtered);
+        checkSystemStatus();
     }
 
     function proceed() {
