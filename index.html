@@ -3,203 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ᴍɪᴜxᴏ | ᴏꜰꜰɪᴄɪᴀʟ</title>
+    <title>ᴍɪᴜxᴏ | ᴜɴɪꜰɪᴇᴅ ʜᴜʙ ᴠ7.9</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --text: #f8fafc;
-            --accent: #2563eb;
-            --border: rgba(255, 255, 255, 0.1);
-            --glass: blur(15px);
+            --bg: #020617;
+            --standard-blue: #2563eb;
             --vip-gold: #fbbf24;
+            --panic-red: #ef4444;
+            --glass: blur(25px);
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
         }
 
-        [data-theme="light"] {
-            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
-            --card-bg: rgba(255, 255, 255, 0.8);
-            --text: #1e293b;
-            --border: rgba(0, 0, 0, 0.1);
+        body, html { 
+            margin: 0; padding: 0; background: var(--bg); color: var(--text); 
+            font-family: 'Segoe UI', system-ui, sans-serif; overflow-x: hidden; min-height: 100vh;
         }
 
-        body { 
-            font-family: 'Segoe UI', sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text);
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            overflow-x: hidden;
-            transition: 0.3s;
-            padding-bottom: 60px;
+        #snow-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1; }
+
+        .miuxo-banner { 
+            width: 100%; padding: 12px 0; text-align: center; font-weight: 800; font-size: 0.85rem; 
+            letter-spacing: 1px; z-index: 1001; position: relative;
+            background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; 
         }
 
-        #snow-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; }
-        .miuxo-banner { width: 100%; padding: 12px 0; text-align: center; font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1001; background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; }
-        .content-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; backdrop-filter: var(--glass); width: 100%; max-width: 500px; box-sizing: border-box; position: relative; }
-        
-        #pass-input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: none; box-sizing: border-box; background: rgba(125,125,125,0.1); color: var(--text); outline: none; }
-        .action-btn { background: var(--accent); color: white; font-weight: 700; cursor: pointer; border-radius: 12px; padding: 14px; width: 100%; border: none; transition: 0.3s; }
-        
-        .search-area { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
-        #search-bar { flex-grow: 1; background: rgba(125, 125, 125, 0.1); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; outline: none; }
-        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); padding: 10px; border-radius: 12px; cursor: pointer; }
+        /* --- AUTH GATE --- */
+        #auth-gate {
+            position: fixed; inset: 0; z-index: 9999; background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+        }
 
-        .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
-        .social-card { background: rgba(125, 125, 125, 0.05); border: 1px solid var(--border); border-radius: 15px; padding: 15px 5px; text-decoration: none; color: var(--text); transition: 0.3s; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .social-card:hover { background: rgba(125, 125, 125, 0.15); transform: translateY(-3px); }
+        .auth-box {
+            background: rgba(255, 255, 255, 0.03); padding: 40px; border-radius: 30px;
+            border: 1px solid var(--border); backdrop-filter: var(--glass);
+            width: 90%; max-width: 380px; text-align: center;
+        }
 
-        /* Ticker */
-        .ticker-wrap { position: fixed; bottom: 0; width: 100%; overflow: hidden; height: 40px; background: rgba(0, 0, 0, 0.8); border-top: 1px solid var(--vip-gold); backdrop-filter: blur(10px); z-index: 2000; }
-        .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: ticker 25s linear infinite; line-height: 40px; color: var(--vip-gold); font-weight: bold; font-size: 0.85rem; }
-        @keyframes ticker { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+        #gate-title { cursor: pointer; user-select: none; transition: 0.3s; }
+        #gate-title:active { transform: scale(0.95); opacity: 0.5; }
 
-        .container { display: none; width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
-        #login-overlay { position: fixed; inset: 0; background: var(--bg-gradient); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .key-input {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid var(--border);
+            background: rgba(0,0,0,0.5); color: #fff; text-align: center; font-size: 1.2rem;
+            margin: 20px 0; outline: none; box-sizing: border-box;
+        }
+
+        /* --- MAIN HUB --- */
+        #main-hub { display: none; width: 100%; flex-direction: column; align-items: center; padding: 20px 0; z-index: 2; position: relative; }
         
-        #welcome-txt, #login-title { cursor: pointer; user-select: none; }
+        .search-area { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
+        #search-bar { 
+            flex-grow: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border); 
+            color: white; padding: 12px; border-radius: 12px; outline: none;
+        }
+
+        .social-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); 
+            gap: 12px; width: 100%; margin-top: 10px;
+        }
+
+        .social-card { 
+            background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px 5px; 
+            text-decoration: none; color: white; display: flex; flex-direction: column; 
+            align-items: center; transition: 0.3s ease; text-align: center; border: 1px solid var(--border);
+        }
+
+        .social-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.1); }
+        .social-card div { font-size: 1.4rem; margin-bottom: 5px; }
+
+        #panic-btn {
+            display: none; position: fixed; bottom: 20px; right: 20px;
+            background: var(--panic-red); color: white; border: none;
+            padding: 15px 25px; border-radius: 50px; font-weight: bold;
+            cursor: pointer; z-index: 1000; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .vip-theme { border-color: var(--vip-gold) !important; box-shadow: 0 0 30px rgba(251, 191, 36, 0.15); }
+        .std-theme { border-color: var(--standard-blue) !important; }
+        
+        .visitor-stat { font-size: 0.7rem; opacity: 0.6; display: none; margin-top: 5px; color: var(--vip-gold); }
+
         .admin-hold { animation: pulse 0.6s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; color: var(--vip-gold); } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
+<canvas id="snow-canvas"></canvas>
 <audio id="login-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
 
-<canvas id="snow-canvas"></canvas>
 <div class="miuxo-banner">✨ HAPPY NEW YEAR 2026! THE FUTURE IS MIUXO ✨</div>
 
-<div id="login-overlay">
-    <div class="content-card" style="max-width: 340px;">
-        <h2 id="login-title">🔐 HUB ACCESS</h2>
-        <input type="password" id="pass-input" placeholder="Master Code">
-        <button onclick="checkPass()" class="action-btn">UNLOCK HUB</button>
+<div id="auth-gate">
+    <div class="auth-box">
+        <h2 id="gate-title" onmousedown="startAdminTimer()" onmouseup="clearAdminTimer()" ontouchstart="startAdminTimer()" ontouchend="clearAdminTimer()">🔐 HUB ACCESS</h2>
+        <input type="password" id="access-key" class="key-input" placeholder="Enter Access Code" oninput="checkHint()">
+        <button class="btn-auth" id="login-btn" onclick="unlockSession()" style="width:100%; padding:15px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer;">INITIALIZE HUB</button>
     </div>
 </div>
 
-<div class="container" id="main-content">
-    <div class="content-card">
-        <h3>🌐 MIUXO ECOSYSTEM</h3>
+<button id="panic-btn" onclick="selfDestruct()">PANIC: EXIT</button>
+
+<div id="main-hub">
+    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius: 20px; padding: 25px; width: 95%; max-width: 900px; backdrop-filter: var(--glass);" id="hub-frame">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+            <div>
+                <h3 id="session-tag" style="margin:0; text-transform: uppercase; letter-spacing: 1px;">SYSTEM ACTIVE</h3>
+                <div id="visitor-display" class="visitor-stat">TOTAL ACCESSES: <span id="v-count">0</span></div>
+            </div>
+            <span id="live-clock" style="font-family: monospace; opacity: 0.7;">00:00:00</span>
+        </div>
+
         <div class="search-area">
             <input type="text" id="search-bar" placeholder="🔍 Search tools..." onkeyup="filterTools()">
-            <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">🌙</button>
         </div>
-        <span id="count-label" style="font-size: 0.7rem; color: #94a3b8; margin: 10px 0; display: block;">Available Tools: 18</span>
-        <div class="social-grid" id="tool-grid">
-            <a href="https://discord.com/invite/2rcKEjsVwV" onclick="trackClick('Discord')" target="_blank" class="social-card new"><div>💬</div><span style="font-size:0.6rem;">DISCORD</span></a>
-            <a href="https://www.instagram.com/aimiuxo/reels/" onclick="trackClick('Insta')" target="_blank" class="social-card"><div>📸</div><span style="font-size:0.6rem;">INSTA</span></a>
-            <a href="https://www.youtube.com/@aimiuxo" onclick="trackClick('YouTube')" target="_blank" class="social-card"><div>🎬</div><span style="font-size:0.6rem;">YOUTUBE</span></a>
-            <a href="https://miuxo.in/" onclick="trackClick('Miuxo.in')" target="_blank" class="social-card" style="border: 1px solid #2563eb;"><div>🌐</div><span style="font-size:0.6rem;">MIUXO.IN</span></a>
-            <a href="https://www.socialboosting.com/" onclick="trackClick('Boosting')" target="_blank" class="social-card" style="border: 1px solid #ff4d4d;"><div>📈</div><span style="font-size:0.6rem;">BOOSTING</span></a>
-            <a href="https://boostgrams.com/" onclick="trackClick('Grams')" target="_blank" class="social-card" style="border: 1px solid #C13584;"><div>🔥</div><span style="font-size:0.6rem;">GRAMS</span></a>
-            <a href="https://snapinsta.to/" onclick="trackClick('SnapInsta')" target="_blank" class="social-card" style="border: 1px solid #e1306c;"><div>📥</div><span style="font-size:0.6rem;">SNAPINSTA</span></a>
-            <a href="https://magiceraser.org/" onclick="trackClick('Eraser')" target="_blank" class="social-card" style="border: 1px solid #ffde59;"><div>🪄</div><span style="font-size:0.6rem;">ERASER</span></a>
-            <a href="https://github.com/" onclick="trackClick('GitHub')" target="_blank" class="social-card" style="border: 1px solid #fff;"><div>🐙</div><span style="font-size:0.6rem;">GITHUB</span></a>
-            <a href="https://replit.com/" onclick="trackClick('Replit')" target="_blank" class="social-card" style="border: 1px solid #f26207;"><div>🌀</div><span style="font-size:0.6rem;">REPLIT</span></a>
-            <a href="https://chatgpt.com/codex" onclick="trackClick('Codex AI')" target="_blank" class="social-card" style="border: 1px solid #10a37f;"><div>🤖</div><span style="font-size:0.6rem;">CODEX AI</span></a>
-            <a href="https://console.cloud.google.com/" onclick="trackClick('G-Auth')" target="_blank" class="social-card" style="border: 1px solid #4285F4;"><div>🔑</div><span style="font-size:0.6rem;">G-AUTH</span></a>
-            <a href="https://www.infinityfree.com/" onclick="trackClick('Hosting')" target="_blank" class="social-card" style="border: 1px solid #005696;"><div>☁️</div><span style="font-size:0.6rem;">HOSTING</span></a>
-            <a href="https://www.godaddy.com/" onclick="trackClick('GoDaddy')" target="_blank" class="social-card" style="border: 1px solid #00a63f;"><div>🚀</div><span style="font-size:0.6rem;">GODADDY</span></a>
-            <a href="https://www.shopify.com/" onclick="trackClick('Store')" target="_blank" class="social-card" style="border: 1px solid #95bf47;"><div>🛍️</div><span style="font-size:0.6rem;">STORE</span></a>
-            <a href="https://superprofile.bio/" onclick="trackClick('Bio Link')" target="_blank" class="social-card" style="border: 1px solid #7B3FE4;"><div>💎</div><span style="font-size:0.6rem;">BIO LINK</span></a>
-            <a href="https://tools.picsart.com/" onclick="trackClick('Picsart')" target="_blank" class="social-card" style="border: 1px solid #ff0066;"><div>🎨</div><span style="font-size:0.6rem;">PICSART</span></a>
-            <a href="https://www.veed.io/" onclick="trackClick('Veed.io')" target="_blank" class="social-card" style="border: 1px solid #343434;"><div>📽️</div><span style="font-size:0.6rem;">VEED.IO</span></a>
+
+        <div class="social-grid" id="tool-grid"></div>
+        
+        <div style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; text-align: center;">
+            <button onclick="selfDestruct()" style="background:none; color:var(--text); border:1px solid grey; padding: 8px 20px; border-radius: 8px; cursor:pointer; font-size:0.7rem;">TERMINATE SESSION</button>
         </div>
     </div>
-
-    <div class="content-card">
-        <h2 id="welcome-txt">WELCOME</h2>
-        <button onclick="logout()" style="background:none; color:var(--text); border:1px solid grey; padding: 5px 10px; border-radius: 5px; cursor:pointer; font-size:0.6rem;">LOGOUT</button>
-    </div>
-</div>
-
-<div class="ticker-wrap" id="ticker-box" style="display: none;">
-    <div class="ticker" id="ticker-text">🚀 WELCOME TO MIUXO HUB v2.6</div>
 </div>
 
 <script>
-    const MASTER_CODE = "2025";
-    let pressTimer;
-
-    // --- EMERGENCY OFF TRIGGER ---
-    const loginTitle = document.getElementById('login-title');
-    const startEmergency = () => {
-        loginTitle.classList.add('admin-hold');
-        pressTimer = setTimeout(() => {
-            let cmd = prompt("ADMIN BYPASS:\nType 'OFF' to disable Maintenance Mode.");
-            if(cmd && cmd.toUpperCase() === 'OFF') {
-                localStorage.setItem('miuxo_maint', 'false');
-                alert("✅ Maintenance Mode Deactivated.");
-                location.reload();
-            }
-        }, 5000); 
-    };
-    const endEmergency = () => { loginTitle.classList.remove('admin-hold'); clearTimeout(pressTimer); };
-    loginTitle.onmousedown = startEmergency; loginTitle.onmouseup = endEmergency;
-    loginTitle.ontouchstart = startEmergency; loginTitle.ontouchend = endEmergency;
-
-    // --- FUNCTIONS ---
-    function checkPass() {
-        if(localStorage.getItem('miuxo_maint') === 'true') {
-            alert("⚠️ SYSTEM UNDER MAINTENANCE\n(Hold 'HUB ACCESS' title for 5s to bypass)");
-            return;
-        }
-        if (document.getElementById('pass-input').value === MASTER_CODE) {
-            document.getElementById('login-sound').play(); // Play sound
-            setTimeout(() => login("Master Admin"), 300); // Small delay for sound to start
-        } else alert("Invalid Code");
-    }
-
-    function login(name) {
-        localStorage.setItem('miuxo_session', JSON.stringify({ name, time: Date.now() }));
-        showHub(name);
-    }
-
-    function showHub(name) {
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('main-content').style.display = 'block';
-        document.getElementById('ticker-box').style.display = 'block';
-        const wel = document.getElementById('welcome-txt');
-        wel.innerText = `WELCOME, ${name.toUpperCase()}`;
-        
-        const start = () => { wel.classList.add('admin-hold'); pressTimer = setTimeout(showAdminMenu, 3000); };
-        const end = () => { wel.classList.remove('admin-hold'); clearTimeout(pressTimer); };
-        wel.onmousedown = start; wel.onmouseup = end;
-        wel.ontouchstart = start; wel.ontouchend = end;
-
-        const savedNews = localStorage.getItem('miuxo_news');
-        if(savedNews) document.getElementById('ticker-text').innerText = savedNews;
-    }
-
-    function showAdminMenu() {
-        const stats = JSON.parse(localStorage.getItem('miuxo_stats')) || {};
-        let dataStr = Object.entries(stats).map(([k,v])=>`${k}: ${v}`).join("\n");
-        let cmd = prompt(`📊 STATS:\n${dataStr || 'No data'}\n\nCOMMANDS:\n'LOCK', 'NEWS', 'RESET'`);
-        if(!cmd) return;
-        cmd = cmd.toUpperCase();
-        if(cmd === 'LOCK') { localStorage.setItem('miuxo_maint', 'true'); logout(); }
-        else if(cmd === 'NEWS') { let m = prompt("New Message:"); if(m) { localStorage.setItem('miuxo_news', m); location.reload(); } }
-        else if(cmd === 'RESET') { localStorage.removeItem('miuxo_stats'); location.reload(); }
-    }
-
-    function logout() { localStorage.removeItem('miuxo_session'); location.reload(); }
+    const VIP_CODE = "2025";
+    const STD_CODE = "1111";
+    const ADMIN_BYPASS = "0000"; 
     
-    function toggleTheme() {
-        const body = document.body;
-        const theme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        body.setAttribute('data-theme', theme);
-        localStorage.setItem('miuxo_theme', theme);
-        document.getElementById('theme-icon').innerText = theme === 'light' ? '☀️' : '🌙';
+    let adminTimer;
+
+    const TOOLS = [
+        { name: "NEAPAY", url: "https://neapay.com/", icon: "🏦", border: "#1a365d" },
+        { name: "WAN VIDEO", url: "https://wan.video/", icon: "🔮", border: "#ffffff" },
+        { name: "INVIDEO", url: "https://invideo.io/", icon: "🎥", border: "#4f46e5" },
+        { name: "EASYCOMMENT", url: "https://easycomment.ai/", icon: "💬", border: "#3b82f6" },
+        { name: "TRADELLE", url: "https://tradelle.io/", icon: "📈", border: "#facc15" },
+        { name: "FOOTAGE", url: "https://footagecrate.com/", icon: "🎬", border: "#ef4444" },
+        { name: "PENTEST AI", url: "https://pentestgpt.ai/", icon: "🛡️", border: "#00ff00" },
+        { name: "PLAY.HT", url: "https://play.ht/", icon: "🔊", border: "#4a90e2" },
+        { name: "GEMINI", url: "https://gemini.google.com/", icon: "✨", border: "#8E75FF" },
+        { name: "REPLIT", url: "https://replit.com/", icon: "🌀", border: "#f26207" },
+        { name: "GITHUB", url: "https://github.com/", icon: "🐙", border: "#ffffff" },
+        { name: "DARK OSINT", url: "https://darkosint.in/", icon: "🔍", border: "#991b1b" }
+    ];
+
+    // --- ADMIN & VISITOR LOGIC ---
+    function startAdminTimer() {
+        document.getElementById('gate-title').classList.add('admin-hold');
+        adminTimer = setTimeout(() => {
+            let key = prompt("ADMIN BYPASS KEY:");
+            if (key === ADMIN_BYPASS) {
+                let cmd = prompt("ADMIN CONTROLS:\n'LOCK' - Close Hub\n'UNLOCK' - Open Hub\n'RESET' - Clear Visitor Stats").toUpperCase();
+                if (cmd === 'LOCK') { localStorage.setItem('hub_locked', 'true'); alert("Locked."); }
+                else if (cmd === 'UNLOCK') { localStorage.setItem('hub_locked', 'false'); alert("Unlocked."); }
+                else if (cmd === 'RESET') { localStorage.setItem('visitor_count', '0'); alert("Stats Reset."); }
+            }
+            clearAdminTimer();
+        }, 3000);
     }
 
-    window.onload = () => {
-        const t = localStorage.getItem('miuxo_theme') || 'dark';
-        document.body.setAttribute('data-theme', t);
-        document.getElementById('theme-icon').innerText = t === 'light' ? '☀️' : '🌙';
-        const s = JSON.parse(localStorage.getItem('miuxo_session'));
-        if (s && (Date.now() - s.time < 86400000)) showHub(s.name);
-        initSnow(); drawSnow();
-    };
+    function clearAdminTimer() {
+        clearTimeout(adminTimer);
+        document.getElementById('gate-title').classList.remove('admin-hold');
+    }
+
+    function updateVisitorCount() {
+        let count = parseInt(localStorage.getItem('visitor_count') || "0");
+        count++;
+        localStorage.setItem('visitor_count', count.toString());
+        document.getElementById('v-count').innerText = count;
+    }
+
+    function checkHint() {
+        const val = document.getElementById('access-key').value;
+        const gate = document.getElementById('gate-title');
+        const btn = document.getElementById('login-btn');
+        if(val === VIP_CODE) { 
+            gate.style.color = "#fbbf24"; gate.innerText = "⭐ VIP ACCESS READY";
+            btn.style.background = "var(--vip-gold)"; btn.style.color = "black";
+        } else if (val === STD_CODE) {
+            gate.style.color = "#3b82f6"; gate.innerText = "🔓 NORMAL SESSION";
+            btn.style.background = "var(--standard-blue)"; btn.style.color = "white";
+        } else { 
+            gate.style.color = "white"; gate.innerText = "🔐 HUB ACCESS";
+            btn.style.background = "var(--standard-blue)";
+        }
+    }
+
+    function unlockSession() {
+        if (localStorage.getItem('hub_locked') === 'true') {
+            alert("⚠️ SYSTEM LOCKED\nMaintenance in progress."); return;
+        }
+
+        const key = document.getElementById('access-key').value;
+        const hubFrame = document.getElementById('hub-frame');
+        const sessionTag = document.getElementById('session-tag');
+        const visitorStat = document.getElementById('visitor-display');
+
+        if(key === VIP_CODE || key === STD_CODE) {
+            updateVisitorCount();
+            document.getElementById('login-sound').play();
+            renderTools(TOOLS);
+            
+            if(key === VIP_CODE) {
+                sessionTag.innerText = "👑 VIP GOLD SESSION";
+                sessionTag.style.color = "var(--vip-gold)";
+                hubFrame.classList.add('vip-theme');
+                document.getElementById('panic-btn').style.display = 'block';
+                visitorStat.style.display = 'block'; // Only show stats for VIP
+            } else {
+                sessionTag.innerText = "👤 NORMAL SESSION";
+                sessionTag.style.color = "#3b82f6";
+                hubFrame.classList.add('std-theme');
+                document.getElementById('panic-btn').style.display = 'none';
+                visitorStat.style.display = 'none';
+            }
+            setTimeout(proceed, 300);
+        } else { alert("INVALID ACCESS CODE"); }
+    }
+
+    function renderTools(list) {
+        document.getElementById('tool-grid').innerHTML = list.map(t => `
+            <a href="${t.url}" target="_blank" class="social-card" style="border: 1px solid ${t.border}">
+                <div>${t.icon}</div><span style="font-size:0.6rem; font-weight:800">${t.name}</span>
+            </a>`).join('');
+    }
+
+    function filterTools() {
+        const val = document.getElementById('search-bar').value.toUpperCase();
+        const filtered = TOOLS.filter(t => t.name.includes(val));
+        renderTools(filtered);
+    }
+
+    function proceed() {
+        document.getElementById('auth-gate').style.transform = "translateY(-100%)";
+        document.getElementById('main-hub').style.display = 'flex';
+    }
+
+    function selfDestruct() {
+        document.getElementById('main-hub').style.display = 'none';
+        document.getElementById('panic-btn').style.display = 'none';
+        document.getElementById('access-key').value = "";
+        document.getElementById('auth-gate').style.transform = "translateY(0)";
+        document.getElementById('hub-frame').className = ""; 
+        checkHint();
+    }
 
     // --- SNOW LOGIC ---
     const canvas = document.getElementById('snow-canvas');
@@ -212,13 +264,16 @@
     }
     function drawSnow() {
         ctx.clearRect(0,0,canvas.width,canvas.height); 
-        ctx.fillStyle = document.body.getAttribute('data-theme') === 'light' ? "rgba(0,0,0,0.1)" : "white";
+        ctx.fillStyle = "white";
         flakes.forEach(f => {
             ctx.beginPath(); ctx.arc(f.x, f.y, f.s, 0, Math.PI*2); ctx.fill();
             f.y += f.d; if(f.y > canvas.height) f.y = -10;
         });
         requestAnimationFrame(drawSnow);
     }
+
+    window.onload = () => { initSnow(); drawSnow(); };
+    setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
 </body>
 </html>
