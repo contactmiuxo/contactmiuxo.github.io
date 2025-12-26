@@ -34,10 +34,7 @@
             padding-bottom: 60px;
         }
 
-        /* Canvas Layers */
-        #snow-canvas, #sparkle-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; }
-        #sparkle-canvas { z-index: 10000; } /* Always on top of everything */
-
+        #snow-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; }
         .miuxo-banner { width: 100%; padding: 12px 0; text-align: center; font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1001; background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; }
         .content-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; backdrop-filter: var(--glass); width: 100%; max-width: 500px; box-sizing: border-box; position: relative; }
         
@@ -60,19 +57,15 @@
         .container { display: none; width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
         #login-overlay { position: fixed; inset: 0; background: var(--bg-gradient); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         
+        /* Secret effects */
         #welcome-txt, #login-title { cursor: pointer; user-select: none; }
         .admin-hold { animation: pulse 0.6s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; color: var(--vip-gold); } 100% { opacity: 1; } }
     </style>
 </head>
-<body onmouseover="playHoverSound(event)" onclick="createBurst(event)">
+<body>
 
 <canvas id="snow-canvas"></canvas>
-<canvas id="sparkle-canvas"></canvas>
-
-<audio id="login-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
-<audio id="hover-sound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
-
 <div class="miuxo-banner">✨ HAPPY NEW YEAR 2026! THE FUTURE IS MIUXO ✨</div>
 
 <div id="login-overlay">
@@ -91,28 +84,10 @@
             <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">🌙</button>
         </div>
         <span id="count-label" style="font-size: 0.7rem; color: #94a3b8; margin: 10px 0; display: block;">Available Tools: 18</span>
-       </div>
-        <span class="tool-count" id="count-label">Available Tools: 18</span>
-        <div class="social-grid" id="tool-grid">
-            <a href="https://discord.com/invite/2rcKEjsVwV" onclick="trackClick('Discord')" target="_blank" class="social-card new"><div>💬</div><span style="font-size:0.6rem;">DISCORD</span></a>
-            <a href="https://www.instagram.com/aimiuxo/reels/" onclick="trackClick('Insta')" target="_blank" class="social-card"><div>📸</div><span style="font-size:0.6rem;">INSTA</span></a>
-            <a href="https://www.youtube.com/@aimiuxo" onclick="trackClick('YouTube')" target="_blank" class="social-card"><div>🎬</div><span style="font-size:0.6rem;">YOUTUBE</span></a>
-            <a href="https://miuxo.in/" onclick="trackClick('Miuxo.in')" target="_blank" class="social-card" style="border: 1px solid #2563eb;"><div>🌐</div><span style="font-size:0.6rem;">MIUXO.IN</span></a>
-            <a href="https://www.socialboosting.com/" onclick="trackClick('Boosting')" target="_blank" class="social-card" style="border: 1px solid #ff4d4d;"><div>📈</div><span style="font-size:0.6rem;">BOOSTING</span></a>
-            <a href="https://boostgrams.com/" onclick="trackClick('Grams')" target="_blank" class="social-card" style="border: 1px solid #C13584;"><div>🔥</div><span style="font-size:0.6rem;">GRAMS</span></a>
-            <a href="https://snapinsta.to/" onclick="trackClick('SnapInsta')" target="_blank" class="social-card" style="border: 1px solid #e1306c;"><div>📥</div><span style="font-size:0.6rem;">SNAPINSTA</span></a>
-            <a href="https://magiceraser.org/" onclick="trackClick('Eraser')" target="_blank" class="social-card" style="border: 1px solid #ffde59;"><div>🪄</div><span style="font-size:0.6rem;">ERASER</span></a>
-            <a href="https://github.com/" onclick="trackClick('GitHub')" target="_blank" class="social-card" style="border: 1px solid #fff;"><div>🐙</div><span style="font-size:0.6rem;">GITHUB</span></a>
-            <a href="https://replit.com/" onclick="trackClick('Replit')" target="_blank" class="social-card" style="border: 1px solid #f26207;"><div>🌀</div><span style="font-size:0.6rem;">REPLIT</span></a>
-            <a href="https://chatgpt.com/codex" onclick="trackClick('Codex AI')" target="_blank" class="social-card" style="border: 1px solid #10a37f;"><div>🤖</div><span style="font-size:0.6rem;">CODEX AI</span></a>
-            <a href="https://console.cloud.google.com/" onclick="trackClick('G-Auth')" target="_blank" class="social-card" style="border: 1px solid #4285F4;"><div>🔑</div><span style="font-size:0.6rem;">G-AUTH</span></a>
-            <a href="https://www.infinityfree.com/" onclick="trackClick('Hosting')" target="_blank" class="social-card" style="border: 1px solid #005696;"><div>☁️</div><span style="font-size:0.6rem;">HOSTING</span></a>
-            <a href="https://www.godaddy.com/" onclick="trackClick('GoDaddy')" target="_blank" class="social-card" style="border: 1px solid #00a63f;"><div>🚀</div><span style="font-size:0.6rem;">GODADDY</span></a>
-            <a href="https://www.shopify.com/" onclick="trackClick('Store')" target="_blank" class="social-card" style="border: 1px solid #95bf47;"><div>🛍️</div><span style="font-size:0.6rem;">STORE</span></a>
-            <a href="https://superprofile.bio/" onclick="trackClick('Bio Link')" target="_blank" class="social-card" style="border: 1px solid #7B3FE4;"><div>💎</div><span style="font-size:0.6rem;">BIO LINK</span></a>
-            <a href="https://tools.picsart.com/" onclick="trackClick('Picsart')" target="_blank" class="social-card" style="border: 1px solid #ff0066;"><div>🎨</div><span style="font-size:0.6rem;">PICSART</span></a>
-            <a href="https://www.veed.io/" onclick="trackClick('Veed.io')" target="_blank" class="social-card" style="border: 1px solid #343434;"><div>📽️</div><span style="font-size:0.6rem;">VEED.IO</span></a>
-        </div>
+        <div class="social-grid">
+            <a href="https://discord.com/invite/2rcKEjsVwV" onclick="trackClick('Discord')" target="_blank" class="social-card"><div>💬</div><span style="font-size:0.6rem;">DISCORD</span></a>
+            <a href="https://miuxo.in/" onclick="trackClick('Miuxo.in')" target="_blank" class="social-card"><div>🌐</div><span style="font-size:0.6rem;">MIUXO.IN</span></a>
+            </div>
     </div>
 
     <div class="content-card">
@@ -122,71 +97,66 @@
 </div>
 
 <div class="ticker-wrap" id="ticker-box" style="display: none;">
-    <div class="ticker" id="ticker-text">🚀 WELCOME TO MIUXO HUB v2.8</div>
+    <div class="ticker" id="ticker-text">🚀 WELCOME TO MIUXO HUB v2.5</div>
 </div>
 
 <script>
     const MASTER_CODE = "2025";
     let pressTimer;
 
-    // --- SPARKLE LOGIC ---
-    const sparkleCanvas = document.getElementById('sparkle-canvas');
-    const sCtx = sparkleCanvas.getContext('2d');
-    let particles = [];
-
-    class Particle {
-        constructor(x, y) {
-            this.x = x; this.y = y;
-            this.size = Math.random() * 3 + 1;
-            this.speedX = (Math.random() - 0.5) * 6;
-            this.speedY = (Math.random() - 0.5) * 6;
-            this.color = '#fbbf24'; // Gold
-            this.opacity = 1;
-        }
-        update() {
-            this.x += this.speedX; this.y += this.speedY;
-            this.opacity -= 0.02;
-        }
-        draw() {
-            sCtx.globalAlpha = this.opacity;
-            sCtx.fillStyle = this.color;
-            sCtx.beginPath();
-            sCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            sCtx.fill();
-        }
-    }
-
-    function createBurst(e) {
-        for (let i = 0; i < 10; i++) particles.push(new Particle(e.clientX, e.clientY));
-    }
-
-    function handleParticles() {
-        sCtx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-            if (particles[i].opacity <= 0) {
-                particles.splice(i, 1); i--;
+    // --- EMERGENCY OFF BUTTON (Login Screen) ---
+    const loginTitle = document.getElementById('login-title');
+    const startEmergency = () => {
+        loginTitle.classList.add('admin-hold');
+        pressTimer = setTimeout(() => {
+            let cmd = prompt("ADMIN BYPASS:\nType 'OFF' to disable Maintenance Mode.");
+            if(cmd && cmd.toUpperCase() === 'OFF') {
+                localStorage.setItem('miuxo_maint', 'false');
+                alert("✅ Maintenance Mode Deactivated.");
+                location.reload();
             }
-        }
-        requestAnimationFrame(handleParticles);
+        }, 5000); 
+    };
+    const endEmergency = () => { loginTitle.classList.remove('admin-hold'); clearTimeout(pressTimer); };
+    
+    loginTitle.onmousedown = startEmergency; loginTitle.onmouseup = endEmergency;
+    loginTitle.ontouchstart = startEmergency; loginTitle.ontouchend = endEmergency;
+
+    // --- HUB LOGIC ---
+    function trackClick(name) {
+        let s = JSON.parse(localStorage.getItem('miuxo_stats')) || {};
+        s[name] = (s[name] || 0) + 1;
+        localStorage.setItem('miuxo_stats', JSON.stringify(s));
     }
 
-    // --- OTHER LOGIC ---
-    function playHoverSound(e) {
-        const target = e.target.closest('.social-card, .action-btn, .theme-toggle');
-        if (target) {
-            const snd = document.getElementById('hover-sound');
-            snd.currentTime = 0; snd.volume = 0.2; snd.play();
+    function showAdminMenu() {
+        const stats = JSON.parse(localStorage.getItem('miuxo_stats')) || {};
+        let dataStr = Object.entries(stats).map(([k,v])=>`${k}: ${v}`).join("\n");
+        let cmd = prompt(`📊 STATS:\n${dataStr || 'No data'}\n\nCOMMANDS:\n'LOCK' (Toggle Maint)\n'NEWS' (Update Ticker)\n'RESET' (Clear Stats)`);
+        
+        if(!cmd) return;
+        cmd = cmd.toUpperCase();
+        if(cmd === 'LOCK') {
+            const cur = localStorage.getItem('miuxo_maint') === 'true';
+            localStorage.setItem('miuxo_maint', !cur);
+            alert(`Maintenance set to: ${!cur}`);
+            location.reload();
+        } else if(cmd === 'NEWS') {
+            let m = prompt("New Message:");
+            if(m) { localStorage.setItem('miuxo_news', m); location.reload(); }
+        } else if(cmd === 'RESET') {
+            localStorage.removeItem('miuxo_stats');
+            location.reload();
         }
     }
 
     function checkPass() {
-        if(localStorage.getItem('miuxo_maint') === 'true') { alert("⚠️ SYSTEM UNDER MAINTENANCE"); return; }
-        if (document.getElementById('pass-input').value === MASTER_CODE) {
-            document.getElementById('login-sound').play();
-            setTimeout(() => login("Master Admin"), 300);
-        } else alert("Invalid Code");
+        if(localStorage.getItem('miuxo_maint') === 'true') {
+            alert("⚠️ SYSTEM UNDER MAINTENANCE\n(Admin: Hold 'HUB ACCESS' title to bypass)");
+            return;
+        }
+        if (document.getElementById('pass-input').value === MASTER_CODE) login("Master Admin");
+        else alert("Invalid Code");
     }
 
     function login(name) {
@@ -198,10 +168,19 @@
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
         document.getElementById('ticker-box').style.display = 'block';
-        document.getElementById('welcome-txt').innerText = `WELCOME, ${name.toUpperCase()}`;
+        const wel = document.getElementById('welcome-txt');
+        wel.innerText = `WELCOME, ${name.toUpperCase()}`;
+        
+        const start = () => { wel.classList.add('admin-hold'); pressTimer = setTimeout(showAdminMenu, 3000); };
+        const end = () => { wel.classList.remove('admin-hold'); clearTimeout(pressTimer); };
+        wel.onmousedown = start; wel.onmouseup = end;
+        wel.ontouchstart = start; wel.ontouchend = end;
+
         const savedNews = localStorage.getItem('miuxo_news');
         if(savedNews) document.getElementById('ticker-text').innerText = savedNews;
     }
+
+    function logout() { localStorage.removeItem('miuxo_session'); location.reload(); }
 
     function toggleTheme() {
         const body = document.body;
@@ -212,19 +191,11 @@
     }
 
     window.onload = () => {
-        sparkleCanvas.width = window.innerWidth;
-        sparkleCanvas.height = window.innerHeight;
-        handleParticles();
-        
         const t = localStorage.getItem('miuxo_theme') || 'dark';
         document.body.setAttribute('data-theme', t);
+        document.getElementById('theme-icon').innerText = t === 'light' ? '☀️' : '🌙';
         const s = JSON.parse(localStorage.getItem('miuxo_session'));
         if (s && (Date.now() - s.time < 86400000)) showHub(s.name);
-    };
-
-    window.onresize = () => {
-        sparkleCanvas.width = window.innerWidth;
-        sparkleCanvas.height = window.innerHeight;
     };
 </script>
 </body>
