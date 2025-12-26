@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ᴍɪᴜxᴏ | ᴜɴɪꜰɪᴇᴅ ʜᴜʙ ᴠ9.0</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --bg: #020617;
@@ -42,7 +43,6 @@
 
         #bg-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1; }
 
-        /* Fingerprint Effect CSS */
         .fingerprint-data {
             position: fixed;
             pointer-events: none;
@@ -83,7 +83,7 @@
         .key-input {
             width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid var(--border);
             background: rgba(0,0,0,0.5); color: #fff; text-align: center; font-size: 1.2rem;
-            margin: 20px 0; outline: none; box-sizing: border-box;
+            margin: 15px 0; outline: none; box-sizing: border-box;
         }
 
         #main-hub { display: none; width: 100%; flex-direction: column; align-items: center; padding: 20px 0; z-index: 2; position: relative; }
@@ -124,6 +124,9 @@
         @keyframes pulse-status { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         #panic-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--panic-red); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; z-index: 1000; }
+        
+        /* Google Button Centering */
+        .g-btn-wrapper { display: flex; justify-content: center; margin-bottom: 15px; }
     </style>
 </head>
 <body data-theme="frost" data-session="none">
@@ -135,6 +138,18 @@
 <div id="auth-gate">
     <div class="auth-box">
         <h2 id="gate-title">🔐 HUB ACCESS</h2>
+        
+        <div class="g-btn-wrapper">
+            <div id="g_id_onload"
+                 data-client_id="785119101330-40kgkkoekfbsqu7vo4t6leqalltrs7th.apps.googleusercontent.com"
+                 data-callback="handleGoogleLogin"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+        </div>
+
+        <div style="margin: 10px 0; color: rgba(255,255,255,0.2); font-size: 0.7rem; letter-spacing: 2px;">OR USE CODE</div>
+
         <input type="password" id="access-key" class="key-input" placeholder="Enter Access Code" oninput="checkHint()">
         <button id="login-btn" onclick="unlockSession()" style="width:100%; padding:15px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer;">INITIALIZE</button>
     </div>
@@ -171,17 +186,46 @@
 </div>
 
 <script>
+    // CONFIGURATION
     const ADMIN_CODE = "0000";
     const VIP_CODE = "2025";
     const STD_CODE = "1111";
+    const ADMIN_EMAIL = "your-email@gmail.com"; // CHANGE THIS TO YOUR EMAIL
+
     let activeList = [];
-    
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let flakes = [], drops = [], bgMode = "snow";
 
     const VIP_TOOLS = [ { name: "NEAPAY", url: "https://neapay.com/", icon: "🏦", border: "#1a365d" }, { name: "WAN VIDEO", url: "https://wan.video/", icon: "🔮", border: "#ffffff" }, { name: "INVIDEO", url: "https://invideo.io/", icon: "🎥", border: "#4f46e5" }, { name: "EASYCOMMENT", url: "https://easycomment.ai/", icon: "💬", border: "#3b82f6" }, { name: "STUDY DROP", url: "https://studydropshipping.com/", icon: "🎓", border: "#1e40af" }, { name: "TRADELLE", url: "https://tradelle.io/", icon: "📈", border: "#facc15" }, { name: "INEEDFX", url: "https://ineedfx.com/", icon: "💥", border: "#ff0055" }, { name: "TEXTURES", url: "https://texturelabs.com/", icon: "🧱", border: "#eab308" }, { name: "FOOTAGE", url: "https://footagecrate.com/", icon: "🎬", border: "#ef4444" }, { name: "MIXKIT", url: "https://mixkit.co/", icon: "🎵", border: "#00fa9a" }, { name: "V-EFFECTS", url: "https://videodffects.com/", icon: "🎞️", border: "#8b5cf6" }, { name: "PENTEST", url: "https://pentestgpt.ai/", icon: "🛡️", border: "#00ff00" }, { name: "PLAY.HT", url: "https://play.ht/", icon: "🔊", border: "#4a90e2" }, { name: "MIXO", url: "https://mixo.in/", icon: "🚀", border: "#ff5a5f" }, { name: "LOOKA", url: "https://looka.com/", icon: "🎨", border: "#00d2ff" }, { name: "BEAUTIFUL", url: "https://www.beautiful.ai/", icon: "💎", border: "#7249d0" }, { name: "STORYHERO", url: "https://storyhero.gg/", icon: "🦸", border: "#FFD700" }, { name: "JITTER", url: "https://jitter.video/", icon: "✨", border: "#222222" }, { name: "PIPIADS", url: "https://www.pipiads.com/", icon: "💰", border: "#ff4d4f" }, { name: "PORTFOLIO", url: "https://atomguygg.github.io/atomguy", icon: "🚀", border: "#00f2ff" }, { name: "ATOMGUY", url: "https://atomguygg.github.io/", icon: "⚛️", border: "#00f2ff" }, { name: "DARKOSINT", url: "https://darkosint.in/", icon: "🔍", border: "#991b1b" }, { name: "ANIMEDUB", url: "https://animedub.co/", icon: "📺", border: "#f97316" }, { name: "INFLACT", url: "https://inflact.com/", icon: "⚡", border: "#7c3aed" }, { name: "DOWNLOAD", url: "https://adescargar.online/", icon: "📥", border: "#0ea5e9" }, { name: "ANKER", url: "https://ankergames.net/", icon: "🎮", border: "#71717a" }, { name: "FUNKYY", url: "https://www.instagram.com/funkyy_mit", icon: "😎", border: "#FF8C00" }, { name: "ECO REXO", url: "https://www.instagram.com/eco.rexo", icon: "🌿", border: "#4CAF50" }, { name: "SHAD", url: "https://www.instagram.com/shad.storie", icon: "📖", border: "#5851DB" }, { name: "SANDBOX", url: "https://codesandbox.io/", icon: "📦", border: "#040404" }, { name: "AI STUDIO", url: "https://aistudio.google.com/", icon: "🧪", border: "#4285F4" }, { name: "GEMINI", url: "https://gemini.google.com/", icon: "✨", border: "#8E75FF" }, { name: "G-CLOUD", url: "https://cloud.google.com/", icon: "☁️", border: "#FBBC04" }, { name: "ASHVIN", url: "https://www.instagram.com/ashvin.shibu", icon: "👤", border: "#E1306C" } ];
     const NORMAL_TOOLS = [ { name: "DISCORD", url: "https://discord.com/invite/2rcKEjsVwV", icon: "💬", border: "#5865F2" }, { name: "INSTA", url: "https://www.instagram.com/aimiuxo/reels/", icon: "📸", border: "#E1306C" }, { name: "YOUTUBE", url: "https://www.youtube.com/@aimiuxo", icon: "🎬", border: "#FF0000" }, { name: "MIUXO.IN", url: "https://miuxo.in/", icon: "🌐", border: "#2563eb" }, { name: "BOOSTING", url: "https://www.socialboosting.com/", icon: "📈", border: "#ff4d4d" }, { name: "GRAMS", url: "https://boostgrams.com/", icon: "🔥", border: "#C13584" }, { name: "SNAPINSTA", url: "https://snapinsta.to/", icon: "📥", border: "#e1306c" }, { name: "ERASER", url: "https://magiceraser.org/", icon: "🪄", border: "#ffde59" }, { name: "GITHUB", url: "https://github.com/", icon: "🐙", border: "#fff" }, { name: "REPLIT", url: "https://replit.com/", icon: "🌀", border: "#f26207" }, { name: "CODEX AI", url: "https://chatgpt.com/codex", icon: "🤖", border: "#10a37f" }, { name: "G-AUTH", url: "https://console.cloud.google.com/", icon: "🔑", border: "#4285F4" }, { name: "HOSTING", url: "https://www.infinityfree.com/", icon: "☁️", border: "#005696" }, { name: "GODADDY", url: "https://www.godaddy.com/", icon: "🚀", border: "#00a63f" }, { name: "STORE", url: "https://www.shopify.com/", icon: "🛍️", border: "#95bf47" }, { name: "BIO LINK", url: "https://superprofile.bio/", icon: "💎", border: "#7B3FE4" }, { name: "PICSART", url: "https://tools.picsart.com/", icon: "🎨", border: "#ff0066" }, { name: "VEED.IO", url: "https://www.veed.io/", icon: "📽️", border: "#343434" } ];
+
+    // GOOGLE LOGIN HANDLER
+    function handleGoogleLogin(response) {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        const tag = document.getElementById('session-tag');
+        const banner = document.getElementById('hub-banner');
+        
+        if(payload.email === ADMIN_EMAIL) {
+            activeList = [...VIP_TOOLS, ...NORMAL_TOOLS];
+            tag.innerText = `ADMIN: ${payload.given_name.toUpperCase()}`;
+            tag.style.color = "var(--admin-red)";
+            document.body.setAttribute('data-session', 'admin');
+            banner.innerText = "⚡ GOOGLE ADMIN VERIFIED | ACCESS GRANTED ⚡";
+            banner.classList.add('admin-banner');
+            initMatrix();
+        } else {
+            activeList = NORMAL_TOOLS;
+            tag.innerText = `USER: ${payload.given_name.toUpperCase()}`;
+            tag.style.color = "var(--online-green)";
+            banner.innerText = `✨ WELCOME ${payload.given_name.toUpperCase()} | SECURE SESSION ✨`;
+            initSnow();
+        }
+        
+        render(activeList);
+        renderFrequent();
+        show();
+    }
 
     function createRipple(e) {
         for(let i=0; i<8; i++) {
@@ -190,23 +234,17 @@
             span.innerText = Math.round(Math.random());
             span.style.left = e.clientX + 'px';
             span.style.top = e.clientY + 'px';
-            
-            // Random scatter direction
             const angle = Math.random() * Math.PI * 2;
             const dist = 20 + Math.random() * 40;
             span.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
             span.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-
             document.body.appendChild(span);
             setTimeout(() => span.remove(), 800);
         }
     }
 
-    // Attach click listener to whole body to catch clicks
     document.addEventListener('mousedown', (e) => {
-        if (document.getElementById('main-hub').style.display === 'flex') {
-            createRipple(e);
-        }
+        if (document.getElementById('main-hub').style.display === 'flex') createRipple(e);
     });
 
     function toggleTheme() {
