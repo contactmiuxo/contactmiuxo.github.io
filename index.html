@@ -72,14 +72,23 @@
 <div class="miuxo-banner">✨ HAPPY NEW YEAR 2026 • MIUXO HUB v4.0 ✨</div>
 
 <div id="login-overlay">
-    <div class="content-card" style="max-width: 340px;">
-        <h2 style="letter-spacing: 2px;">🔐 HUB ACCESS</h2>
-        <input type="password" id="pass-input" placeholder="Enter Master Code" style="width:100%; padding:14px; border-radius:12px; border:none; background:rgba(255,255,255,0.1); color:white; text-align:center; margin-bottom:15px; box-sizing: border-box;">
-        <button onclick="checkPass()" style="width:100%; padding:14px; border-radius:12px; border:none; background:var(--accent); color:white; font-weight:bold; cursor:pointer;">UNLOCK</button>
-        <div style="margin:20px 0; opacity: 0.3; font-size: 0.8rem;">OR</div>
-        <div id="g_id_onload" data-client_id="785119101330-40kgkkoekfbsqu7vo4t6leqalltrs7th.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
-        <div class="g_id_signin" data-type="standard"></div>
+    <div class="bio-trigger" id="scanner" onmousedown="startScan()" onmouseup="stopScan()">
+        <span style="font-size: 2rem;">👤</span>
+        <div class="scan-line" id="line"></div>
     </div>
+
+    <h2 style="letter-spacing: 2px; margin-bottom: 25px;">HUB ACCESS</h2>
+    
+    <input type="password" id="pass-input" placeholder="Enter Master Code">
+    <button class="btn-unlock" onclick="checkPass()">Unlock</button>
+    
+    <div style="margin:20px 0; opacity: 0.3; font-size: 0.8rem;">SECURE GOOGLE GATEWAY</div>
+    
+    <div id="g_id_onload" 
+         data-client_id="785119101330-40kgkkoekfbsqu7vo4t6leqalltrs7th.apps.googleusercontent.com" 
+         data-callback="handleGoogleLogin">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
 </div>
 
 <div id="gift-reveal">
