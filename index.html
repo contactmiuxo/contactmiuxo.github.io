@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ᴍɪᴜxᴏ | ᴜɴɪꜰɪᴇᴅ ʜᴜʙ ᴠ7.9</title>
+    <title>ᴍɪᴜxᴏ | ᴜɴɪꜰɪᴇᴅ ʜᴜʙ ᴠ8.3</title>
     <style>
         :root {
             --bg: #020617;
@@ -11,7 +11,6 @@
             --vip-gold: #fbbf24;
             --panic-red: #ef4444;
             --online-green: #22c55e;
-            --matrix-green: #00ff41;
             --glass: blur(25px);
             --card-bg: rgba(15, 23, 42, 0.8);
             --border: rgba(255, 255, 255, 0.1);
@@ -31,7 +30,6 @@
             background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; 
         }
 
-        /* --- AUTH GATE --- */
         #auth-gate {
             position: fixed; inset: 0; z-index: 9999; background: var(--bg);
             display: flex; align-items: center; justify-content: center;
@@ -44,19 +42,16 @@
             width: 90%; max-width: 380px; text-align: center;
         }
 
-        #gate-title { cursor: pointer; user-select: none; transition: 0.3s; }
-
         .key-input {
             width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid var(--border);
             background: rgba(0,0,0,0.5); color: #fff; text-align: center; font-size: 1.2rem;
             margin: 20px 0; outline: none; box-sizing: border-box;
         }
 
-        /* --- MAIN HUB --- */
         #main-hub { display: none; width: 100%; flex-direction: column; align-items: center; padding: 20px 0; z-index: 2; position: relative; }
         
         .social-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
             gap: 12px; width: 100%; margin-top: 10px;
         }
 
@@ -64,31 +59,14 @@
             background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px 5px; 
             text-decoration: none; color: white; display: flex; flex-direction: column; 
             align-items: center; transition: 0.3s ease; text-align: center; border: 1px solid var(--border);
-            position: relative;
         }
 
-        .social-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.1); }
-        
-        .featured-card {
-            border: 2px solid var(--vip-gold) !important;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-            animation: featured-glow 2s infinite alternate;
-        }
-        @keyframes featured-glow {
-            from { box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
-            to { box-shadow: 0 0 25px rgba(251, 191, 36, 0.5); }
-        }
-        .featured-badge {
-            position: absolute; top: 0; right: 0; background: var(--vip-gold);
-            color: black; font-size: 0.4rem; padding: 2px 5px; font-weight: 900;
-            border-bottom-left-radius: 8px; text-transform: uppercase;
-        }
+        .social-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.1); border-color: #fff !important; }
 
         .status-dot {
             width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px;
             background: var(--online-green); box-shadow: 0 0 5px var(--online-green);
         }
-        .status-down { background: var(--panic-red) !important; box-shadow: 0 0 5px var(--panic-red) !important; }
         .pulse { animation: pulse-status 2s infinite; }
         @keyframes pulse-status { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
@@ -96,13 +74,8 @@
             display: none; position: fixed; bottom: 20px; right: 20px;
             background: var(--panic-red); color: white; border: none;
             padding: 15px 25px; border-radius: 50px; font-weight: bold;
-            cursor: pointer; z-index: 1000; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            cursor: pointer; z-index: 1000;
         }
-
-        .vip-theme { border-color: var(--vip-gold) !important; box-shadow: 0 0 30px rgba(251, 191, 36, 0.15); }
-        .std-theme { border-color: var(--standard-blue) !important; }
-        
-        .visitor-stat { font-size: 0.7rem; opacity: 0.6; display: none; margin-top: 5px; color: var(--vip-gold); }
     </style>
 </head>
 <body>
@@ -110,77 +83,105 @@
 <canvas id="bg-canvas"></canvas>
 <audio id="login-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
 
-<div class="miuxo-banner">✨ HAPPY NEW YEAR 2026! THE FUTURE IS MIUXO ✨</div>
+<div class="miuxo-banner">✨ MIUXO UNIFIED HUB | v8.3 SECURE ACCESS ✨</div>
 
 <div id="auth-gate">
     <div class="auth-box">
-        <h2 id="gate-title" onmousedown="startAdminTimer()" onmouseup="clearAdminTimer()">🔐 HUB ACCESS</h2>
+        <h2 id="gate-title">🔐 HUB ACCESS</h2>
         <input type="password" id="access-key" class="key-input" placeholder="Enter Access Code" oninput="checkHint()">
-        <button class="btn-auth" id="login-btn" onclick="unlockSession()" style="width:100%; padding:15px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer;">INITIALIZE HUB</button>
+        <button id="login-btn" onclick="unlockSession()" style="width:100%; padding:15px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer;">INITIALIZE</button>
     </div>
 </div>
 
-<button id="panic-btn" onclick="selfDestruct()">PANIC: EXIT</button>
+<button id="panic-btn" onclick="selfDestruct()">EXIT SESSION</button>
 
 <div id="main-hub">
-    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius: 20px; padding: 25px; width: 95%; max-width: 900px; backdrop-filter: var(--glass);" id="hub-frame">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-            <div>
-                <h3 id="session-tag" style="margin:0; text-transform: uppercase; letter-spacing: 1px;">SYSTEM ACTIVE</h3>
-                <div id="visitor-display" class="visitor-stat">TOTAL ACCESSES: <span id="v-count">0</span></div>
-            </div>
+    <div id="hub-frame" style="background:var(--card-bg); border:1px solid var(--border); border-radius: 20px; padding: 25px; width: 95%; max-width: 1100px; backdrop-filter: var(--glass);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 id="session-tag" style="margin:0;">SYSTEM ACTIVE</h3>
             <span id="live-clock" style="font-family: monospace; opacity: 0.7;">00:00:00</span>
         </div>
-
-        <div style="display:flex; gap:10px; width:100%; margin-bottom:20px;">
-            <input type="text" id="search-bar" placeholder="🔍 Search tools..." onkeyup="filterTools()" style="flex-grow:1; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; padding:12px; border-radius:12px; outline:none;">
-        </div>
-
         <div class="social-grid" id="tool-grid"></div>
-        
-        <div style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; text-align: center;">
-            <button onclick="selfDestruct()" style="background:none; color:var(--text); border:1px solid grey; padding: 8px 20px; border-radius: 8px; cursor:pointer; font-size:0.7rem;">TERMINATE SESSION</button>
-        </div>
     </div>
 </div>
 
 <script>
     const VIP_CODE = "2025";
     const STD_CODE = "1111";
-    const ADMIN_BYPASS = "0000"; 
     
-    let adminTimer, featuredIndex = -1, bgMode = "snow";
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
-    let flakes = [], drops = [];
+    let flakes = [], drops = [], bgMode = "snow";
 
-    const TOOLS = [
+    const VIP_TOOLS = [
         { name: "NEAPAY", url: "https://neapay.com/", icon: "🏦", border: "#1a365d" },
         { name: "WAN VIDEO", url: "https://wan.video/", icon: "🔮", border: "#ffffff" },
         { name: "INVIDEO", url: "https://invideo.io/", icon: "🎥", border: "#4f46e5" },
         { name: "EASYCOMMENT", url: "https://easycomment.ai/", icon: "💬", border: "#3b82f6" },
+        { name: "STUDY DROP", url: "https://studydropshipping.com/", icon: "🎓", border: "#1e40af" },
         { name: "TRADELLE", url: "https://tradelle.io/", icon: "📈", border: "#facc15" },
+        { name: "INEEDFX", url: "https://ineedfx.com/", icon: "💥", border: "#ff0055" },
+        { name: "TEXTURES", url: "https://texturelabs.com/", icon: "🧱", border: "#eab308" },
         { name: "FOOTAGE", url: "https://footagecrate.com/", icon: "🎬", border: "#ef4444" },
-        { name: "PENTEST AI", url: "https://pentestgpt.ai/", icon: "🛡️", border: "#00ff00" },
+        { name: "MIXKIT", url: "https://mixkit.co/", icon: "🎵", border: "#00fa9a" },
+        { name: "V-EFFECTS", url: "https://videodffects.com/", icon: "🎞️", border: "#8b5cf6" },
+        { name: "PENTEST", url: "https://pentestgpt.ai/", icon: "🛡️", border: "#00ff00" },
         { name: "PLAY.HT", url: "https://play.ht/", icon: "🔊", border: "#4a90e2" },
+        { name: "MIXO", url: "https://mixo.in/", icon: "🚀", border: "#ff5a5f" },
+        { name: "LOOKA", url: "https://looka.com/", icon: "🎨", border: "#00d2ff" },
+        { name: "BEAUTIFUL", url: "https://www.beautiful.ai/", icon: "💎", border: "#7249d0" },
+        { name: "STORYHERO", url: "https://storyhero.gg/", icon: "🦸", border: "#FFD700" },
+        { name: "JITTER", url: "https://jitter.video/", icon: "✨", border: "#222222" },
+        { name: "PIPIADS", url: "https://www.pipiads.com/", icon: "💰", border: "#ff4d4f" },
+        { name: "PORTFOLIO", url: "https://atomguygg.github.io/atomguy", icon: "🚀", border: "#00f2ff" },
+        { name: "ATOMGUY", url: "https://atomguygg.github.io/", icon: "⚛️", border: "#00f2ff" },
+        { name: "DARKOSINT", url: "https://darkosint.in/", icon: "🔍", border: "#991b1b" },
+        { name: "ANIMEDUB", url: "https://animedub.co/", icon: "📺", border: "#f97316" },
+        { name: "INFLACT", url: "https://inflact.com/", icon: "⚡", border: "#7c3aed" },
+        { name: "DOWNLOAD", url: "https://adescargar.online/", icon: "📥", border: "#0ea5e9" },
+        { name: "ANKER", url: "https://ankergames.net/", icon: "🎮", border: "#71717a" },
+        { name: "FUNKYY", url: "https://www.instagram.com/funkyy_mit", icon: "😎", border: "#FF8C00" },
+        { name: "ECO REXO", url: "https://www.instagram.com/eco.rexo", icon: "🌿", border: "#4CAF50" },
+        { name: "SHAD", url: "https://www.instagram.com/shad.storie", icon: "📖", border: "#5851DB" },
+        { name: "SANDBOX", url: "https://codesandbox.io/", icon: "📦", border: "#040404" },
+        { name: "AI STUDIO", url: "https://aistudio.google.com/", icon: "🧪", border: "#4285F4" },
         { name: "GEMINI", url: "https://gemini.google.com/", icon: "✨", border: "#8E75FF" },
-        { name: "REPLIT", url: "https://replit.com/", icon: "🌀", border: "#f26207" },
-        { name: "GITHUB", url: "https://github.com/", icon: "🐙", border: "#ffffff" },
-        { name: "DARK OSINT", url: "https://darkosint.in/", icon: "🔍", border: "#991b1b" }
+        { name: "G-CLOUD", url: "https://cloud.google.com/", icon: "☁️", border: "#FBBC04" },
+        { name: "ASHVIN", url: "https://www.instagram.com/ashvin.shibu", icon: "👤", border: "#E1306C" }
     ];
 
-    // --- RENDER & LOGIC ---
+    const NORMAL_TOOLS = [
+        { name: "DISCORD", url: "https://discord.com/invite/2rcKEjsVwV", icon: "💬", border: "#5865F2" },
+        { name: "INSTA", url: "https://www.instagram.com/aimiuxo/reels/", icon: "📸", border: "#E1306C" },
+        { name: "YOUTUBE", url: "https://www.youtube.com/@aimiuxo", icon: "🎬", border: "#FF0000" },
+        { name: "MIUXO.IN", url: "https://miuxo.in/", icon: "🌐", border: "#2563eb" },
+        { name: "BOOSTING", url: "https://www.socialboosting.com/", icon: "📈", border: "#ff4d4d" },
+        { name: "GRAMS", url: "https://boostgrams.com/", icon: "🔥", border: "#C13584" },
+        { name: "SNAPINSTA", url: "https://snapinsta.to/", icon: "📥", border: "#e1306c" },
+        { name: "ERASER", url: "https://magiceraser.org/", icon: "🪄", border: "#ffde59" },
+        { name: "GITHUB", url: "https://github.com/", icon: "🐙", border: "#fff" },
+        { name: "REPLIT", url: "https://replit.com/", icon: "🌀", border: "#f26207" },
+        { name: "CODEX AI", url: "https://chatgpt.com/codex", icon: "🤖", border: "#10a37f" },
+        { name: "G-AUTH", url: "https://console.cloud.google.com/", icon: "🔑", border: "#4285F4" },
+        { name: "HOSTING", url: "https://www.infinityfree.com/", icon: "☁️", border: "#005696" },
+        { name: "GODADDY", url: "https://www.godaddy.com/", icon: "🚀", border: "#00a63f" },
+        { name: "STORE", url: "https://www.shopify.com/", icon: "🛍️", border: "#95bf47" },
+        { name: "BIO LINK", url: "https://superprofile.bio/", icon: "💎", border: "#7B3FE4" },
+        { name: "PICSART", url: "https://tools.picsart.com/", icon: "🎨", border: "#ff0066" },
+        { name: "VEED.IO", url: "https://www.veed.io/", icon: "📽️", border: "#343434" }
+    ];
+
     function checkHint() {
         const val = document.getElementById('access-key').value;
         const gate = document.getElementById('gate-title');
         const btn = document.getElementById('login-btn');
         if(val === VIP_CODE) { 
-            gate.style.color = "var(--vip-gold)"; gate.innerText = "⭐ VIP ACCESS READY";
-            btn.style.background = "var(--vip-gold)"; btn.style.color = "black";
+            gate.style.color = "var(--vip-gold)"; gate.innerText = "⭐ VIP GOLD DETECTED";
+            btn.style.background = "var(--vip-gold)"; btn.style.color = "#000";
         } else if (val === STD_CODE) {
             gate.style.color = "var(--standard-blue)"; gate.innerText = "🔓 NORMAL SESSION";
-            btn.style.background = "var(--standard-blue)"; btn.style.color = "white";
-        } else { 
+            btn.style.background = "var(--standard-blue)"; btn.style.color = "#fff";
+        } else {
             gate.style.color = "white"; gate.innerText = "🔐 HUB ACCESS";
             btn.style.background = "var(--standard-blue)";
         }
@@ -188,57 +189,44 @@
 
     function unlockSession() {
         const key = document.getElementById('access-key').value;
-        const hubFrame = document.getElementById('hub-frame');
-        const sessionTag = document.getElementById('session-tag');
+        const tag = document.getElementById('session-tag');
+        const frame = document.getElementById('hub-frame');
 
-        if(key === VIP_CODE || key === STD_CODE) {
-            document.getElementById('login-sound').play();
-            featuredIndex = Math.floor(Math.random() * TOOLS.length);
-            renderTools(TOOLS);
-            
-            if(key === VIP_CODE) {
-                sessionTag.innerText = "👑 VIP GOLD SESSION";
-                sessionTag.style.color = "var(--vip-gold)";
-                hubFrame.classList.add('vip-theme');
-                document.getElementById('panic-btn').style.display = 'block';
-                document.getElementById('visitor-display').style.display = 'block';
-                initMatrix(); // Trigger Matrix Effect
-            } else {
-                sessionTag.innerText = "👤 NORMAL SESSION";
-                sessionTag.style.color = "#3b82f6";
-                hubFrame.classList.add('std-theme');
-                initSnow();
-            }
-            document.getElementById('auth-gate').style.transform = "translateY(-100%)";
-            document.getElementById('main-hub').style.display = 'flex';
-        } else { alert("INVALID ACCESS CODE"); }
+        if(key === VIP_CODE) {
+            tag.innerText = "👑 VIP GOLD SESSION";
+            tag.style.color = "var(--vip-gold)";
+            frame.style.borderColor = "var(--vip-gold)";
+            render(VIP_TOOLS);
+            initMatrix();
+            show();
+        } else if (key === STD_CODE) {
+            tag.innerText = "👤 NORMAL SESSION";
+            tag.style.color = "var(--standard-blue)";
+            frame.style.borderColor = "var(--standard-blue)";
+            render(NORMAL_TOOLS);
+            initSnow();
+            show();
+        } else { alert("ACCESS DENIED"); }
     }
 
-    function renderTools(list) {
-        document.getElementById('tool-grid').innerHTML = list.map((t, index) => {
-            const isFeatured = (list.length === TOOLS.length && index === featuredIndex);
-            return `
-            <a href="${t.url}" target="_blank" class="social-card ${isFeatured ? 'featured-card' : ''}" style="border: 1px solid ${t.border}">
-                ${isFeatured ? '<span class="featured-badge">Featured</span>' : ''}
-                <div style="font-size:1.4rem; margin-bottom:5px;">${t.icon}</div>
+    function render(list) {
+        document.getElementById('tool-grid').innerHTML = list.map(t => `
+            <a href="${t.url}" target="_blank" class="social-card" style="border: 1px solid ${t.border}">
+                <div style="font-size:1.5rem; margin-bottom:5px;">${t.icon}</div>
                 <div style="display:flex; align-items:center;">
                     <span class="status-dot pulse"></span>
-                    <span style="font-size:0.6rem; font-weight:800; letter-spacing:0.5px;">${t.name}</span>
+                    <span style="font-size:0.6rem; font-weight:800;">${t.name}</span>
                 </div>
-            </a>`;
-        }).join('');
+            </a>`).join('');
     }
 
-    function selfDestruct() {
-        document.getElementById('main-hub').style.display = 'none';
-        document.getElementById('auth-gate').style.transform = "translateY(0)";
-        document.getElementById('hub-frame').className = ""; 
-        document.getElementById('access-key').value = "";
-        initSnow(); // Reset to snow
-        checkHint();
+    function show() {
+        document.getElementById('login-sound').play();
+        document.getElementById('auth-gate').style.transform = "translateY(-100%)";
+        document.getElementById('main-hub').style.display = 'flex';
+        document.getElementById('panic-btn').style.display = 'block';
     }
 
-    // --- BACKGROUND EFFECTS ---
     function initSnow() {
         bgMode = "snow";
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -248,8 +236,7 @@
     function initMatrix() {
         bgMode = "matrix";
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const columns = Math.floor(canvas.width / 20);
-        drops = Array(columns).fill(1);
+        drops = Array(Math.floor(canvas.width / 20)).fill(1);
     }
 
     function draw() {
@@ -263,8 +250,7 @@
             ctx.fillStyle = "rgba(2, 6, 23, 0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#00ff41"; ctx.font = "15px monospace";
             drops.forEach((y, i) => {
-                const text = String.fromCharCode(Math.random() * 128);
-                ctx.fillText(text, i * 20, y * 20);
+                ctx.fillText(String.fromCharCode(Math.random() * 128), i * 20, y * 20);
                 if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             });
@@ -272,8 +258,8 @@
         requestAnimationFrame(draw);
     }
 
+    function selfDestruct() { location.reload(); }
     window.onload = () => { initSnow(); draw(); };
-    window.onresize = () => { bgMode === "snow" ? initSnow() : initMatrix(); };
     setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
 </body>
