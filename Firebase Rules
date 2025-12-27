@@ -1,0 +1,14 @@
+{
+  "rules": {
+    ".read": "true",
+    "blacklist": {
+      ".write": "auth != null && auth.token.email == 'contactmiuxo@gmail.com'"
+    },
+    "transactions": {
+      ".write": "true"
+    },
+    "$other": {
+      ".write": "true"
+    }
+  }
+}
