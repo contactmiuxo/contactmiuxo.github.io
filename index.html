@@ -46,6 +46,8 @@
         .social-card { background: var(--card-bg); border-radius: 20px; padding: 20px 5px; text-decoration: none; color: var(--text); display: flex; flex-direction: column; align-items: center; transition: 0.3s; border: 1px solid var(--border); position: relative; cursor: pointer; }
         .social-card:hover { transform: translateY(-5px); border-color: var(--accent); }
 
+        .del-tool { position: absolute; top: 5px; left: 5px; background: var(--owner-red); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: none; z-index: 5; }
+
         .badge { font-size: 0.5rem; padding: 2px 6px; border-radius: 4px; position: absolute; top: -8px; right: 10px; font-weight: 900; }
         .badge-vip { background: var(--vip-gold); color: #000; }
         .badge-member { background: var(--member-green); color: #fff; }
@@ -58,6 +60,11 @@
         
         .logout-btn { background: none; border: none; color: var(--owner-red); cursor: pointer; font-size: 0.9rem; padding: 0; display: flex; align-items: center; opacity: 0.7; transition: 0.3s; }
         .logout-btn:hover { opacity: 1; transform: scale(1.1); }
+
+        .manager-stats { display: flex; gap: 15px; margin-top: 10px; }
+        .stat-box { flex: 1; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .stat-val { display: block; font-size: 1.2rem; font-weight: 900; color: var(--accent); }
+        .stat-lbl { font-size: 0.5rem; opacity: 0.6; text-transform: uppercase; }
     </style>
 </head>
 <body onload="checkPersistedSession()">
@@ -98,7 +105,14 @@
 <div id="main-hub">
     <div class="hub-container">
         <div id="admin-panel" class="control-panel">
-            <div class="section-label" id="panel-title" style="color:var(--admin-purple); margin:0;">🛠️ SYSTEM ADMIN MODE</div>
+            <div class="section-label" id="panel-title" style="color:var(--admin-purple); margin:0;">🛠️ MANAGER MODE ACTIVATED</div>
+            
+            <div class="manager-stats">
+                <div class="stat-box"><span class="stat-val" id="stat-total">0</span><span class="stat-lbl">Total Resources</span></div>
+                <div class="stat-box"><span class="stat-val" style="color:var(--vip-gold)" id="stat-vip">0</span><span class="stat-lbl">VIP Tools</span></div>
+                <div class="stat-box"><span class="stat-val" style="color:var(--owner-red)">LIVE</span><span class="stat-lbl">Deployment Status</span></div>
+            </div>
+
             <div class="utility-box" style="margin-top: 15px;">
                 <div class="util-card">
                     <span style="font-size:0.6rem;">DEPLOY NEW RESOURCE</span>
@@ -122,8 +136,7 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div class="profile-chip">
-                <div id="profile-area" style="display:flex; align-items:center; gap:8px;">
-                    </div>
+                <div id="profile-area" style="display:flex; align-items:center; gap:8px;"></div>
                 <div style="width: 1px; height: 15px; background: var(--border);"></div>
                 <button class="logout-btn" onclick="terminateSession()" title="Logout">
                     <span style="font-size:0.6rem; font-weight:bold; margin-right:4px;">EXIT</span>
@@ -247,16 +260,33 @@
         render('member-grid', 'member');
         render('vip-grid', 'vip');
         render('private-grid', 'private');
+        updateManagerStats();
+    }
+
+    function updateManagerStats() {
+        if(!['admin', 'owner'].includes(SESSION.role)) return;
+        const total = MASTER_DATA.public.length + MASTER_DATA.member.length + MASTER_DATA.vip.length + MASTER_DATA.private.length;
+        document.getElementById('stat-total').innerText = total;
+        document.getElementById('stat-vip').innerText = MASTER_DATA.vip.length;
     }
 
     function createCard(t) {
+        const showDel = ['admin', 'owner'].includes(SESSION.role) ? 'block' : 'none';
         return `
             <div class="social-card" onclick="window.open('${t.url}', '_blank')">
+                <button class="del-tool" style="display:${showDel}" onclick="event.stopPropagation(); deleteTool('${t.id}', '${t.type}')">×</button>
                 ${t.type !== 'public' ? `<span class="badge badge-${t.type}">${t.type.toUpperCase()}</span>` : ''}
                 <div style="font-size:2rem; margin-bottom:8px;">${t.icon || '🚀'}</div>
                 <div style="font-size:0.7rem; font-weight:900;">${t.name}</div>
             </div>
         `;
+    }
+
+    function deleteTool(id, type) {
+        if(!confirm("Are you sure you want to remove this resource from the production hub?")) return;
+        MASTER_DATA[type] = MASTER_DATA[type].filter(item => item.id !== id);
+        localStorage.setItem('miuxo_master_data', JSON.stringify(MASTER_DATA));
+        refreshUI();
     }
 
     function addNewTool() {
