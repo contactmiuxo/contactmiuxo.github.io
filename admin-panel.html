@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MIUXO | ADMIN</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        body { background: #020617; color: white; font-family: sans-serif; padding: 20px; }
+        .card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid #2563eb; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; border-bottom: 1px solid #333; text-align: left; }
+        th { background: #2563eb; }
+        input { padding: 8px; border-radius: 5px; border: 1px solid #2563eb; background: #000; color: #fff; }
+        .btn { padding: 8px 15px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-del { background: #ef4444; color: white; }
+        .btn-csv { background: #10b981; color: white; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 MIUXO ADMIN</h1>
+
+    <div class="card">
+        <h3>➕ GENERATE CODE / BAN USER</h3>
+        <input type="text" id="manual-code" placeholder="Code/Phone">
+        <button class="btn" style="background:#2563eb; color:white;" onclick="addCode()">Add Code</button>
+        <button class="btn" style="background:#ef4444; color:white;" onclick="banUser()">Ban Phone</button>
+    </div>
+
+    <button class="btn btn-csv" onclick="exportCSV()">📥 Download Sales CSV</button>
+    <input type="text" id="search" placeholder="🔍 Search..." onkeyup="filter()">
+
+    <div class="card">
+        <h3>📋 TRANSACTIONS</h3>
+        <table id="data-table">
+            <thead><tr><th>Time</th><th>Phone</th><th>UTR</th><th>Code</th><th>Action</th></tr></thead>
+            <tbody id="logs"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const firebaseConfig = { databaseURL: "https://miuxo-a750e-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function addCode() { database.ref(document.getElementById('manual-code').value).set("VIP Access"); }
+        function banUser() { database.ref('blacklist/'+document.getElementById('manual-code').value).set({bannedAt: new Date().toLocaleString()}); }
+
+        database.ref('transactions').on('value', snap => {
+            const logs = document.getElementById('logs');
+            logs.innerHTML = "";
+            const data = snap.val();
+            if(data) Object.keys(data).reverse().forEach(utr => {
+                const item = data[utr];
+                logs.innerHTML += `<tr><td>${item.time}</td><td>${item.phone}</td><td>${utr}</td><td>${item.code}</td>
+                <td><button class="btn btn-del" onclick="database.ref('transactions/${utr}').remove();database.ref('${item.code}').remove();">Del</button></td></tr>`;
+            });
+        });
+
+        function filter() {
+            let q = document.getElementById('search').value.toUpperCase();
+            let rows = document.getElementById('logs').getElementsByTagName('tr');
+            for(let r of rows) r.style.display = r.innerText.toUpperCase().includes(q) ? "" : "none";
+        }
+
+        function exportCSV() {
+            database.ref('transactions').once('value', snap => {
+                let csv = "Time,Phone,UTR,Code\n";
+                Object.keys(snap.val()).forEach(k => { const i = snap.val()[k]; csv += `${i.time},${i.phone},${k},${i.code}\n`; });
+                const link = document.createElement("a");
+                link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+                link.download = "miuxo_sales.csv";
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
