@@ -32,8 +32,16 @@
         .auth-box { background: rgba(255, 255, 255, 0.03); padding: 30px; border-radius: 30px; border: 1px solid var(--border); backdrop-filter: var(--glass); width: 95%; max-width: 400px; text-align: center; }
 
         .key-input { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--border); background: rgba(0,0,0,0.5); color: #fff; text-align: center; margin: 8px 0; outline: none; box-sizing: border-box; }
-        .btn-primary { width:100%; padding:12px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer; margin-top: 5px; }
-        
+        .btn-primary { width:100%; padding:12px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer; margin-top: 5px; transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4); }
+
+        /* Custom Auth Nav Buttons */
+        .custom-auth-nav { display: flex; align-items: center; justify-content: center; gap: 30px; margin-bottom: 25px; }
+        .login-link { text-decoration: none; color: var(--text); font-size: 0.9rem; font-weight: 600; opacity: 0.8; transition: 0.3s; }
+        .login-link:hover { opacity: 1; color: var(--standard-blue); }
+        .signup-btn-styled { background: #1e293b; color: white; border: 1px solid var(--border); padding: 8px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .signup-btn-styled:hover { background: #334155; border-color: var(--standard-blue); }
+
         #main-hub { display: none; width: 100%; flex-direction: column; align-items: center; padding: 20px 0; z-index: 2; position: relative; }
         .social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; width: 100%; margin-top: 20px; }
         .social-card { background: var(--card-bg); border-radius: 15px; padding: 15px 5px; text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; transition: 0.3s ease; text-align: center; border: 1px solid var(--border); position: relative; overflow: hidden; }
@@ -45,14 +53,30 @@
         .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; background: var(--online-green); box-shadow: 0 0 5px var(--online-green); }
         .pulse { animation: pulse-status 2s infinite; }
         @keyframes pulse-status { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        
-        #panic-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--panic-red); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; z-index: 1000; }
-        .hub-search { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; }
+
+        /* Loader & Log Styles */
+        #loader-overlay { display: none; position: fixed; inset: 0; background: rgba(2, 6, 23, 0.9); z-index: 20001; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(37, 99, 235, 0.1); border-top: 3px solid var(--standard-blue); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .system-log-container { width: 95%; max-width: 1100px; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border); border-radius: 12px; margin-top: 20px; padding: 15px; font-family: monospace; }
+        #log-entries { height: 80px; overflow-y: auto; font-size: 0.7rem; display: flex; flex-direction: column-reverse; }
+        .log-entry { color: #94a3b8; margin-bottom: 4px; border-left: 2px solid var(--border); padding-left: 8px; }
+
+        @media (max-width: 480px) {
+            .custom-auth-nav { flex-direction: column; gap: 10px; }
+            .signup-btn-styled { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
 <canvas id="bg-canvas"></canvas>
+
+<div id="loader-overlay">
+    <div class="spinner"></div>
+    <p style="margin-top:15px; font-size:0.7rem; letter-spacing:2px;">AUTHENTICATING...</p>
+</div>
 
 <div id="tos-overlay">
     <div class="auth-box" style="max-width: 450px; text-align: left;">
@@ -67,44 +91,65 @@
     </div>
 </div>
 
-<div class="miuxo-banner" id="hub-banner">✨ MIUXO UNIFIED HUB | v9.0 SECURE SESSION ✨</div>
+<div id="register-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:20000; align-items:center; justify-content:center; backdrop-filter: blur(15px);">
+    <div class="auth-box" style="max-width: 400px; position: relative;">
+        <span onclick="toggleRegister()" style="position:absolute; top:15px; right:20px; cursor:pointer;">✕</span>
+        <h2 style="color: var(--standard-blue);">📝 REGISTER</h2>
+        <input type="text" id="reg-user" class="key-input" placeholder="Username">
+        <input type="email" id="reg-email" class="key-input" placeholder="Email Address">
+        <input type="password" id="reg-pass" class="key-input" placeholder="Password">
+        <button onclick="handleRegister()" class="btn-primary">CREATE ACCOUNT</button>
+    </div>
+</div>
+
+<div id="recovery-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:20002; align-items:center; justify-content:center; backdrop-filter: blur(15px);">
+    <div class="auth-box" style="max-width: 380px;">
+        <h3 style="color: var(--vip-gold);">🔑 RECOVERY</h3>
+        <div id="step-1">
+            <input type="email" id="rec-email" class="key-input" placeholder="Email Address">
+            <button onclick="sendRecoveryCode()" class="btn-primary">SEND CODE</button>
+        </div>
+        <div id="step-2" style="display:none;">
+            <input type="text" id="rec-code" class="key-input" placeholder="6-Digit Code">
+            <button onclick="resetPassword()" class="btn-primary">VERIFY</button>
+        </div>
+        <p onclick="toggleRecovery()" style="font-size:0.7rem; cursor:pointer; margin-top:10px;">Cancel</p>
+    </div>
+</div>
+
+<div class="miuxo-banner">✨ MIUXO UNIFIED HUB | v9.0 SECURE SESSION ✨</div>
 
 <div id="auth-gate">
     <div class="auth-box">
+        <div class="custom-auth-nav">
+            <a href="#" class="login-link">Login</a>
+            <button class="signup-btn-styled" onclick="toggleRegister()">Sign up</button>
+        </div>
+
         <h2 id="gate-title">🔐 HUB ACCESS</h2>
         
         <div style="display:flex; justify-content:center; margin-bottom:15px;">
-            <div id="g_id_onload" 
-                 data-client_id="785119101330-40kgkkoekfbsqu7vo4t6leqalltrs7th.apps.googleusercontent.com" 
-                 data-callback="handleGoogleLogin">
-            </div>
+            <div id="g_id_onload" data-client_id="YOUR_CLIENT_ID" data-callback="handleGoogleLogin"></div>
             <div class="g_id_signin" data-type="standard" data-shape="pill"></div>
         </div>
 
         <input type="password" id="access-key" class="key-input" placeholder="Access Code">
         <button onclick="unlockSession()" class="btn-primary">INITIALIZE VIP</button>
-        <button onclick="freeLogin()" style="background:transparent; border:1px solid var(--standard-blue); color:var(--standard-blue); margin-top:10px;" class="btn-primary">START GUEST SESSION</button>
+        <p onclick="toggleRecovery()" style="font-size: 0.7rem; cursor: pointer; color: var(--standard-blue); margin: 10px 0;">Forgot Password?</p>
+        <button onclick="freeLogin()" style="background:transparent; border:1px solid var(--standard-blue); color:var(--standard-blue);" class="btn-primary">START GUEST SESSION</button>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
         
         <div style="background:rgba(251,191,36,0.1); padding:15px; border-radius:15px; border:1px solid var(--vip-gold);">
             <p style="color:var(--vip-gold); font-size:0.8rem; font-weight:bold; margin-top:0;">💎 BUY VIP ACCESS (₹50)</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=upi://pay?pa=8606226353@fam%26pn=MIUXO%26am=50%26cu=INR" style="border-radius:10px; margin-bottom:10px;">
-            <input type="number" id="user-phone" class="key-input" placeholder="Phone Number">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=8606226353@fam%26pn=MIUXO%26am=50" style="border-radius:10px; margin-bottom:10px;">
             <input type="text" id="utr-input" class="key-input" placeholder="12-Digit UTR">
             <button onclick="generateVipCode()" style="background:var(--online-green); color:black;" class="btn-primary">VERIFY PAYMENT</button>
         </div>
     </div>
 </div>
 
-<button id="panic-btn" onclick="location.reload()">EXIT SESSION</button>
-
 <div id="main-hub">
-    <div id="upgrade-promo" style="display:none; width: 95%; max-width: 1100px; background: linear-gradient(90deg, #fbbf24, #d97706); padding: 12px; border-radius: 12px; margin-bottom: 15px; color: black; font-weight: 800; justify-content: space-between; align-items: center;">
-        <span>💎 UNLOCK ALL VIP TOOLS FOR ₹50</span>
-        <button onclick="document.getElementById('auth-gate').style.transform='translateY(0%)'" style="background: black; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;">UPGRADE</button>
-    </div>
-
     <div style="background:var(--card-bg); border:1px solid var(--border); border-radius: 20px; padding: 25px; width: 95%; max-width: 1100px; backdrop-filter: var(--glass);">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
             <div><h3 id="greeting-text" style="margin:0;">SYSTEM READY</h3></div>
@@ -116,134 +161,79 @@
         <input type="text" id="tool-search" class="hub-search" placeholder="Search resources..." onkeyup="filterTools()">
         <div class="social-grid" id="tool-grid"></div>
     </div>
+
+    <div class="system-log-container">
+        <div class="log-header" style="display:flex; justify-content:space-between; font-size:0.6rem; color:var(--standard-blue); margin-bottom:5px;">
+            <span>🛰️ LIVE SYSTEM ACTIVITY</span>
+            <span class="pulse" style="color:var(--online-green)">● CONNECTED</span>
+        </div>
+        <div id="log-entries"></div>
+    </div>
 </div>
 
 <script>
-    // Firebase Config
     const firebaseConfig = { databaseURL: "https://miuxo-a750e-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
-    
-    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1454313829206065314/-2tb5jNaf_W1m6dJLJM96YBk_b3-nK6ewVyxC7ok69nK1jd5pSfcLP-fn-IvlycbaUsu";
+    const DISCORD_WEBHOOK = "YOUR_DISCORD_WEBHOOK";
 
-    const VIP_TOOLS = [ 
-        { name: "NEAPAY", url: "https://neapay.com/", icon: "🏦", border: "#fbbf24" }, 
-        { name: "WAN VIDEO", url: "https://wan.video/", icon: "🔮", border: "#ffffff" }, 
-        { name: "DARKOSINT", url: "https://darkosint.in/", icon: "🔍", border: "#991b1b" } 
-    ];
-    const NORMAL_TOOLS = [ 
-        { name: "DISCORD", url: "https://discord.com/invite/2rcKEjsVwV", icon: "💬", border: "#5865F2" }, 
-        { name: "INSTA", url: "https://www.instagram.com/aimiuxo/", icon: "📸", border: "#E1306C" } 
-    ];
+    const VIP_TOOLS = [{ name: "NEAPAY", url: "#", icon: "🏦", border: "#fbbf24" }];
+    const NORMAL_TOOLS = [{ name: "DISCORD", url: "#", icon: "💬", border: "#5865F2" }];
 
-    let currentTools = [];
-
-    // TOS Logic
-    document.getElementById('tos-check').onchange = function() {
-        const btn = document.getElementById('tos-btn');
-        btn.disabled = !this.checked;
-        btn.style.opacity = this.checked ? "1" : "0.5";
-        btn.style.cursor = this.checked ? "pointer" : "not-allowed";
-    };
-    function acceptTos() { 
-        localStorage.setItem('miuxo_tos', 'true'); 
-        document.getElementById('tos-overlay').style.display = 'none'; 
+    function addLog(msg) {
+        const logBox = document.getElementById('log-entries');
+        const time = new Date().toLocaleTimeString([], { hour12: false });
+        logBox.innerHTML = `<div class="log-entry"><span>[${time}]</span> ${msg}</div>` + logBox.innerHTML;
     }
 
-    // Google Login Handler
-    function handleGoogleLogin(response) {
-        const payload = JSON.parse(atob(response.credential.split('.')[1]));
-        document.getElementById('greeting-text').innerText = `WELCOME, ${payload.name.toUpperCase()}`;
-        freeLogin(); // Auto-login to free session after Google Auth
+    function toggleRegister() {
+        const m = document.getElementById('register-modal');
+        m.style.display = m.style.display === 'none' ? 'flex' : 'none';
     }
 
-    // Auth & Render
-    function freeLogin() { 
-        currentTools = NORMAL_TOOLS; 
-        document.getElementById('upgrade-promo').style.display = 'flex';
-        finalizeLogin("GUEST SESSION", currentTools); 
+    function toggleRecovery() {
+        const m = document.getElementById('recovery-modal');
+        m.style.display = m.style.display === 'none' ? 'flex' : 'none';
     }
 
-    function unlockSession() {
+    async function unlockSession() {
         const key = document.getElementById('access-key').value;
-        database.ref(key).once('value').then(snap => {
-            if(snap.exists()) {
-                currentTools = [...VIP_TOOLS, ...NORMAL_TOOLS];
-                finalizeLogin("VIP SESSION", currentTools);
-            } else { alert("Invalid Access Code!"); }
-        });
+        const loader = document.getElementById('loader-overlay');
+        if(!key) return alert("Enter Code!");
+
+        loader.style.display = 'flex';
+        setTimeout(() => {
+            database.ref(key).once('value').then(snap => {
+                loader.style.display = 'none';
+                if(snap.exists()) {
+                    finalizeLogin("VIP SESSION", [...VIP_TOOLS, ...NORMAL_TOOLS]);
+                    addLog("VIP Session Initialized Successfully.");
+                } else { alert("Invalid Code!"); }
+            });
+        }, 1000);
     }
 
     function finalizeLogin(tag, list) {
         document.getElementById('auth-gate').style.transform = "translateY(-100%)";
         document.getElementById('main-hub').style.display = 'flex';
-        document.getElementById('panic-btn').style.display = 'block';
         document.getElementById('session-tag').innerText = tag;
         render(list);
     }
 
     function render(list) {
-        const isGuest = document.getElementById('session-tag').innerText.includes("GUEST");
-        const displayList = isGuest ? [...NORMAL_TOOLS, ...VIP_TOOLS] : list;
-
-        document.getElementById('tool-grid').innerHTML = displayList.map(t => {
-            const isVip = VIP_TOOLS.some(v => v.name === t.name);
-            const lock = isGuest && isVip;
-            return `
-                <div class="tool-item" style="position:relative;">
-                    <a href="${t.url}" target="_blank" class="social-card ${lock ? 'locked-card' : ''}" style="border-color:${t.border}">
-                        ${isVip ? '<span class="vip-badge">VIP</span>' : ''}
-                        <div style="font-size:1.5rem; margin-bottom:5px;">${t.icon}</div>
-                        <div><span class="status-dot pulse"></span><span style="font-size:0.6rem; font-weight:800;">${t.name}</span></div>
-                    </a>
-                    ${lock ? '<div class="lock-overlay" onclick="document.getElementById(\'auth-gate\').style.transform=\'translateY(0%)\'">🔒</div>' : ''}
-                </div>`;
-        }).join('');
+        document.getElementById('tool-grid').innerHTML = list.map(t => `
+            <a href="${t.url}" class="social-card" style="border-color:${t.border}">
+                <div style="font-size:1.5rem;">${t.icon}</div>
+                <div style="font-size:0.6rem;">${t.name}</div>
+            </a>`).join('');
     }
 
-    function filterTools() {
-        const query = document.getElementById('tool-search').value.toLowerCase();
-        const items = document.querySelectorAll('.tool-item');
-        items.forEach(item => {
-            const name = item.innerText.toLowerCase();
-            item.style.display = name.includes(query) ? "block" : "none";
-        });
-    }
+    // Real-time log listener for payments
+    database.ref('transactions').limitToLast(1).on('child_added', (snap) => {
+        const d = snap.val();
+        addLog(`💎 NEW VIP: User ***${d.phone.slice(-4)} verified via UTR.`);
+    });
 
-    // Payment Logic
-    async function generateVipCode() {
-        const phone = document.getElementById('user-phone').value;
-        const utr = document.getElementById('utr-input').value;
-        if(phone.length < 10 || utr.length < 12) return alert("Please enter valid Phone and 12-digit UTR!");
-
-        const code = Math.floor(1000 + Math.random() * 9000).toString();
-        await database.ref(code).set("VIP Access");
-        await database.ref('transactions/' + utr).set({ phone, code, time: new Date().toLocaleString() });
-
-        fetch(DISCORD_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [{ title: "💰 NEW SALE: ₹50", fields: [{ name: "📞 Phone", value: phone, inline:true }, { name: "🎟️ Generated Code", value: code, inline:true }] }] })
-        });
-        alert("Payment Sent for Verification! Your Code: " + code);
-        document.getElementById('access-key').value = code;
-    }
-
-    // Background Animation
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let flakes = [];
-    window.onload = () => {
-        if(localStorage.getItem('miuxo_tos')) document.getElementById('tos-overlay').style.display = 'none';
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        flakes = Array.from({length: 80}, () => ({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*2, d:Math.random()+0.2}));
-        draw();
-    };
-    function draw() {
-        ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "white";
-        flakes.forEach(f => { ctx.beginPath(); ctx.arc(f.x, f.y, f.s, 0, Math.PI*2); ctx.fill(); f.y += f.d; if(f.y > canvas.height) f.y = -10; });
-        requestAnimationFrame(draw);
-    }
     setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
 </body>
