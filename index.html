@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ᴍɪᴜxᴏ | ᴜɴɪꜰɪᴇᴅ ʜᴜʙ ᴠ9.7</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <title>ᴍɪᴜxᴏ | ᴜɴɪꜰɪᴇᴅ ʜᴜʙ ᴠ9.2</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --bg: #020617;
@@ -18,327 +17,212 @@
             --card-bg: rgba(15, 23, 42, 0.8);
             --border: rgba(255, 255, 255, 0.1);
             --text: #f8fafc;
+            --accent: #2563eb;
         }
 
-        body, html { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; min-height: 100vh; }
+        [data-theme="cyber"] {
+            --bg: #050505;
+            --card-bg: rgba(10, 10, 10, 0.9);
+            --accent: #bc13fe;
+            --border: rgba(188, 19, 254, 0.3);
+            --standard-blue: #bc13fe;
+        }
+
+        [data-session="admin"] {
+            --bg: #0a0000;
+            --accent: var(--admin-red);
+            --card-bg: rgba(20, 0, 0, 0.8);
+            --border: rgba(255, 0, 60, 0.4);
+        }
+
+        body, html { 
+            margin: 0; padding: 0; background: var(--bg); color: var(--text); 
+            font-family: 'Segoe UI', system-ui, sans-serif; overflow-x: hidden; min-height: 100vh;
+            transition: background 0.5s ease;
+        }
+
         #bg-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1; }
-        
-        /* MAINTENANCE OVERLAY */
-        #maintenance-screen { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 50000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .m-icon { font-size: 4rem; margin-bottom: 20px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .miuxo-banner { width: 100%; padding: 12px 0; text-align: center; font-weight: 800; font-size: 0.85rem; z-index: 1001; position: relative; background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; }
-        #broadcast-ticker { background: rgba(37, 99, 235, 0.2); color: var(--standard-blue); padding: 8px; font-size: 0.75rem; font-weight: bold; border-bottom: 1px solid var(--border); display: none; overflow: hidden; white-space: nowrap; position: relative; z-index: 1000; }
-        .ticker-text { display: inline-block; padding-left: 100%; animation: ticker 20s linear infinite; }
-        @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+        .miuxo-banner { 
+            width: 100%; padding: 12px 0; text-align: center; font-weight: 800; font-size: 0.85rem; 
+            letter-spacing: 1px; z-index: 1001; position: relative;
+            background: linear-gradient(90deg, #b48608, #fbe134, #b48608); color: #000; 
+            transition: 0.5s; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
 
-        #auth-gate { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; transition: 0.8s ease-in-out; }
-        .auth-box { background: rgba(255, 255, 255, 0.03); padding: 30px; border-radius: 30px; border: 1px solid var(--border); backdrop-filter: var(--glass); width: 95%; max-width: 400px; text-align: center; }
-        
-        .key-input { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--border); background: rgba(0,0,0,0.5); color: #fff; text-align: center; margin: 8px 0; outline: none; box-sizing: border-box; }
-        .btn-primary { width:100%; padding:12px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer; margin-top: 5px; transition: 0.3s; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4); }
+        .countdown-timer { font-family: monospace; font-size: 0.9rem; margin-left: 10px; background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 5px; }
+
+        #auth-gate {
+            position: fixed; inset: 0; z-index: 9999; background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .auth-box {
+            background: rgba(255, 255, 255, 0.03); padding: 40px; border-radius: 30px;
+            border: 1px solid var(--border); backdrop-filter: var(--glass);
+            width: 90%; max-width: 380px; text-align: center;
+        }
+
+        .key-input {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid var(--border);
+            background: rgba(0,0,0,0.5); color: #fff; text-align: center; font-size: 1.2rem;
+            margin: 15px 0; outline: none; box-sizing: border-box;
+        }
 
         #main-hub { display: none; width: 100%; flex-direction: column; align-items: center; padding: 20px 0; z-index: 2; position: relative; }
-        .social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; width: 100%; margin-top: 20px; }
-        .social-card { background: var(--card-bg); border-radius: 15px; padding: 15px 5px; text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: 0.3s; position: relative; }
         
-        .system-log-container { width: 95%; max-width: 1100px; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border); border-radius: 12px; margin-top: 20px; padding: 15px; font-family: monospace; }
-        #log-entries { height: 80px; overflow-y: auto; font-size: 0.7rem; display: flex; flex-direction: column-reverse; }
-        .log-entry { color: #94a3b8; margin-bottom: 4px; border-left: 2px solid var(--border); padding-left: 8px; }
+        .social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; width: 100%; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { text-align: left; padding: 12px; color: var(--standard-blue); font-size: 0.7rem; border-bottom: 1px solid var(--border); }
-        td { padding: 12px; font-size: 0.8rem; border-bottom: 1px solid var(--border); }
+        .social-card { 
+            background: var(--card-bg); border-radius: 15px; padding: 15px 5px; 
+            text-decoration: none; color: white; display: flex; flex-direction: column; 
+            align-items: center; transition: 0.3s ease; text-align: center; border: 1px solid var(--border);
+        }
 
-        #loader-overlay { display: none; position: fixed; inset: 0; background: rgba(2, 6, 23, 0.95); z-index: 20001; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(37, 99, 235, 0.1); border-top: 3px solid var(--standard-blue); border-radius: 50%; animation: spin 1s linear infinite; }
-        
-        .ban-btn { background: var(--panic-red); color: white; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.6rem; }
-        
-        /* TOGGLE SWITCH */
-        .switch { position: relative; display: inline-block; width: 45px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #334155; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--panic-red); }
-        input:checked + .slider:before { transform: translateX(21px); }
+        .social-card:hover { transform: translateY(-5px); border-color: var(--accent) !important; box-shadow: 0 0 15px var(--accent); }
+
+        #upiModal {
+            display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); 
+            z-index:10002; align-items:center; justify-content:center; backdrop-filter: blur(10px);
+        }
+        .upi-content {
+            background: #0f172a; padding: 30px; border-radius: 28px; width: 320px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative;
+        }
     </style>
 </head>
-<body>
+<body data-theme="frost" data-session="none">
 
 <canvas id="bg-canvas"></canvas>
 
-<div id="maintenance-screen">
-    <div class="m-icon">⚠️</div>
-    <h1 style="letter-spacing: 5px; color: var(--panic-red);">SYSTEM OFFLINE</h1>
-    <p style="color: #64748b; max-width: 300px;">Miuxo Unified Hub is currently under maintenance.</p>
+<div class="miuxo-banner" id="hub-banner">
+    ✨ SESSION EXPIRES IN: <span class="countdown-timer" id="expire-timer">00:00:00</span> ✨
 </div>
 
-<div id="loader-overlay"><div class="spinner"></div><p style="margin-top:15px; font-size:0.6rem; letter-spacing:2px;">SYNCING WITH CORE...</p></div>
-
-<div id="admin-panel" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:60000; padding:40px; overflow-y:auto;">
-    <div style="max-width:1100px; margin:auto;">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
-            <h2 style="color:var(--admin-red);">🚨 ADMIN TERMINAL</h2>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <span style="font-size:0.7rem; font-weight:bold; color:var(--panic-red);">LOCKDOWN:</span>
-                <label class="switch"><input type="checkbox" id="m-toggle" onchange="toggleMaintenance(this.checked)"><span class="slider"></span></label>
-                <button onclick="closeAdmin()" class="btn-primary" style="width:auto; background:var(--panic-red); padding:8px 20px;">EXIT</button>
-            </div>
+<div id="upiModal">
+    <div class="upi-content">
+        <span onclick="closePayModal()" style="position:absolute; top:20px; right:25px; font-size:28px; cursor:pointer; color:#475569;">&times;</span>
+        <h2 style="margin: 0; color: #ff5a5f; font-size: 20px;">Unlock VIP</h2>
+        <p style="font-size: 32px; font-weight: 800; margin: 15px 0;">₹50</p>
+        <div style="background: white; padding: 15px; border-radius: 20px; display: inline-block; margin-bottom: 15px;">
+            <img id="upiQR" src="" style="width: 180px; height: 180px; display: block;">
         </div>
-
-        <div class="auth-box" style="max-width:100%; text-align:left; margin: 25px 0; border: 1px solid var(--vip-gold);">
-            <h4 style="color:var(--vip-gold); margin-top:0;">💎 VIP CREATION ENGINE</h4>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="manual-code" class="key-input" placeholder="Custom Code (or Random)" style="flex:1;">
-                <input type="text" id="manual-note" class="key-input" placeholder="User Name/Note" style="flex:1;">
-                <button onclick="adminCreateVip()" class="btn-primary" style="width:auto; padding:0 30px; background:var(--vip-gold); color:black;">GENERATE</button>
-            </div>
-        </div>
-
-        <div style="display:flex; gap:20px; margin:20px 0;">
-            <div class="auth-box" style="flex:1; padding:15px;"><h4>REVENUE</h4><h2 id="stat-rev" style="color:var(--online-green);">₹0</h2></div>
-            <div class="auth-box" style="flex:1; padding:15px;"><h4>ACTIVE NOW</h4><h2 id="stat-active" style="color:var(--standard-blue);">0</h2></div>
-            <div class="auth-box" style="flex:1; padding:15px;"><h4>TOTAL VIPs</h4><h2 id="stat-users">0</h2></div>
-        </div>
-
-        <div class="auth-box" style="max-width:100%; text-align:left; margin-bottom: 20px;">
-            <h4 style="color:var(--online-green);">🛰️ LIVE TRAFFIC MAP</h4>
-            <table id="traffic-table">
-                <thead><tr><th>SESSION ID</th><th>LOCATION</th><th>TYPE</th><th>TIME</th></tr></thead>
-                <tbody id="traffic-body"></tbody>
-            </table>
-        </div>
-
-        <div class="auth-box" style="max-width:100%; text-align:left;">
-            <h4 style="color:var(--panic-red);">👥 VIP USER DATABASE</h4>
-            <table id="admin-tx-table">
-                <thead><tr><th>TIMESTAMP</th><th>NOTE / ID</th><th>CODE</th><th>ACTION</th></tr></thead>
-                <tbody id="tx-body"></tbody>
-            </table>
-        </div>
+        <p style="font-size: 11px; color: #94a3b8; margin-bottom: 20px;">ID: 8606226353@fam</p>
+        <a id="upiLink" href="#" style="display:block; background:#ff5a5f; color:white; text-decoration:none; padding:14px; border-radius:14px; font-weight:bold; margin-bottom:10px;">🚀 OPEN UPI APP</a>
+        <a id="waLink" href="https://wa.me/918921870640?text=I%20have%20paid%20₹50.%20Send%20today's%20code." target="_blank" style="display:block; background:#22c55e; color:white; text-decoration:none; padding:12px; border-radius:14px; font-weight:bold;">✅ VERIFY ON WHATSAPP</a>
     </div>
 </div>
-
-<div id="broadcast-ticker"><div class="ticker-text" id="ticker-content"></div></div>
-<div class="miuxo-banner">✨ MIUXO UNIFIED HUB | v9.7 VIP ENGINE ✨</div>
 
 <div id="auth-gate">
     <div class="auth-box">
         <h2 id="gate-title">🔐 HUB ACCESS</h2>
-        <input type="password" id="access-key" class="key-input" placeholder="Access Code">
-        <button onclick="unlockSession()" class="btn-primary">INITIALIZE SESSION</button>
-        <button onclick="freeLogin()" style="background:transparent; border:1px solid var(--standard-blue); color:var(--standard-blue); margin-top:10px;" class="btn-primary">GUEST SESSION</button>
-
-        <div style="background:rgba(251,191,36,0.1); padding:15px; border-radius:15px; border:1px solid var(--vip-gold); margin-top:20px;">
-            <p style="color:var(--vip-gold); font-size:0.7rem; font-weight:bold;">💎 UPGRADE TO VIP (₹50)</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=upi://pay?pa=8606226353@fam%26pn=MIUXO%26am=50" style="border-radius:8px; margin:10px 0;">
-            <input type="text" id="utr-input" class="key-input" placeholder="12-Digit UTR">
-            <button onclick="generateVipCode()" style="background:var(--online-green); color:black;" class="btn-primary">VERIFY PAYMENT</button>
+        <div class="g-btn-wrapper" style="display: flex; justify-content: center; margin-bottom: 15px;">
+            <div id="g_id_onload" data-client_id="785119101330-40kgkkoekfbsqu7vo4t6leqalltrs7th.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
+            <div class="g_id_signin" data-type="standard" data-shape="pill"></div>
         </div>
+        <input type="password" id="access-key" class="key-input" placeholder="Enter Access Code" oninput="checkHint()">
+        <button onclick="unlockSession()" style="width:100%; padding:15px; border-radius:12px; border:none; background:var(--standard-blue); color:white; font-weight:900; cursor:pointer;">INITIALIZE</button>
+        <button onclick="openPayModal()" style="margin-top:15px; background:none; border:none; color:var(--vip-gold); cursor:pointer; font-size:0.8rem; font-weight:bold;">Don't have a code? Buy for ₹50</button>
     </div>
 </div>
 
 <div id="main-hub">
-    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius: 20px; padding: 25px; width: 95%; max-width: 1100px; backdrop-filter: var(--glass);">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 id="greeting-text" style="margin:0;">SYSTEM ACTIVE</h3>
-            <div style="text-align: right; font-size:0.7rem;">
-                <span id="live-clock">00:00:00</span><br>
-                <span id="session-tag" style="color:var(--vip-gold); font-weight:bold;">AWAITING</span>
+    <div id="hub-frame" style="background:var(--card-bg); border:1px solid var(--border); border-radius: 20px; padding: 25px; width: 95%; max-width: 1100px; backdrop-filter: var(--glass);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <div>
+                <h3 id="greeting-text" style="margin:0; font-size: 1.4rem;">SYSTEM READY</h3>
+            </div>
+            <div style="text-align: right;">
+                <span id="live-clock" style="font-family: monospace; font-size: 1.1rem;">00:00:00</span>
+                <div id="session-tag" style="font-weight: 800; font-size: 0.6rem; margin-top: 5px;">AWAITING...</div>
             </div>
         </div>
-        <div class="social-grid" id="tool-grid">
-            <a href="https://www.instagram.com/ashvin.shibu" target="_blank" class="social-card" style="border: 1px solid #E1306C;"><div>👤</div><span style="font-size:0.6rem;">ASHVIN</span></a>
-            <a href="https://www.namecheap.com/" target="_blank" class="social-card" style="border: 1px solid #de3723;"><div>🌐</div><span style="font-size:0.6rem;">NAMECHEAP</span></a>
-            <a href="https://neapay.com/" target="_blank" class="social-card" style="border: 1px solid #1a365d;"><div>🏦</div><span style="font-size:0.6rem;">NEAPAY</span></a>
-            <a href="https://wan.video/" target="_blank" class="social-card" style="border: 1px solid #000000;"><div>🔮</div><span style="font-size:0.6rem;">WAN VIDEO</span></a>
-            <a href="https://invideo.io/" target="_blank" class="social-card" style="border: 1px solid #4f46e5;"><div>🎥</div><span style="font-size:0.6rem;">INVIDEO</span></a>
-            <a href="https://easycomment.ai/" target="_blank" class="social-card" style="border: 1px solid #3b82f6;"><div>💬</div><span style="font-size:0.6rem;">EASYCOMMENT</span></a>
-            <a href="https://studydropshipping.com/" target="_blank" class="social-card" style="border: 1px solid #1e40af;"><div>🎓</div><span style="font-size:0.6rem;">STUDY DROP</span></a>
-            <a href="https://tradelle.io/" target="_blank" class="social-card" style="border: 1px solid #facc15;"><div>📈</div><span style="font-size:0.6rem;">TRADELLE</span></a>
-            <a href="https://ineedfx.com/" target="_blank" class="social-card" style="border: 1px solid #ff0055;"><div>💥</div><span style="font-size:0.6rem;">INEEDFX</span></a>
-            <a href="https://texturelabs.com/" target="_blank" class="social-card" style="border: 1px solid #eab308;"><div>🧱</div><span style="font-size:0.6rem;">TEXTURES</span></a>
-            <a href="https://footagecrate.com/" target="_blank" class="social-card" style="border: 1px solid #ef4444;"><div>🎬</div><span style="font-size:0.6rem;">FOOTAGE</span></a>
-            <a href="https://mixkit.co/" target="_blank" class="social-card" style="border: 1px solid #00fa9a;"><div>🎵</div><span style="font-size:0.6rem;">MIXKIT</span></a>
-            <a href="https://videodffects.com/" target="_blank" class="social-card" style="border: 1px solid #8b5cf6;"><div>🎞️</div><span style="font-size:0.6rem;">V-EFFECTS</span></a>
-            <a href="https://pentestgpt.ai/" target="_blank" class="social-card" style="border: 1px solid #00ff00;"><div>🛡️</div><span style="font-size:0.6rem;">PENTEST</span></a>
-            <a href="https://play.ht/" target="_blank" class="social-card" style="border: 1px solid #4a90e2;"><div>🔊</div><span style="font-size:0.6rem;">PLAY.HT</span></a>
-            <a href="https://mixo.in/" target="_blank" class="social-card" style="border: 1px solid #ff5a5f;"><div>🚀</div><span style="font-size:0.6rem;">MIXO</span></a>
-            <a href="https://looka.com/" target="_blank" class="social-card" style="border: 1px solid #00d2ff;"><div>🎨</div><span style="font-size:0.6rem;">LOOKA</span></a>
-            <a href="https://www.beautiful.ai/" target="_blank" class="social-card" style="border: 1px solid #7249d0;"><div>💎</div><span style="font-size:0.6rem;">BEAUTIFUL</span></a>
-            <a href="https://storyhero.gg/" target="_blank" class="social-card" style="border: 1px solid #FFD700;"><div>🦸</div><span style="font-size:0.6rem;">STORYHERO</span></a>
-            <a href="https://jitter.video/" target="_blank" class="social-card" style="border: 1px solid #222222;"><div>✨</div><span style="font-size:0.6rem;">JITTER</span></a>
-            <a href="https://www.pipiads.com/" target="_blank" class="social-card" style="border: 1px solid #ff4d4f;"><div>💰</div><span style="font-size:0.6rem;">PIPIADS</span></a>
-            <a href="https://atomguygg.github.io/atomguy" target="_blank" class="social-card" style="border: 1px solid #00f2ff;"><div>🚀</div><span style="font-size:0.6rem;">PORTFOLIO</span></a>
-            <a href="https://atomguygg.github.io/" target="_blank" class="social-card" style="border: 1px solid #00f2ff;"><div>⚛️</div><span style="font-size:0.6rem;">ATOMGUY</span></a>
-            <a href="https://darkosint.in/" target="_blank" class="social-card" style="border: 1px solid #991b1b;"><div>🔍</div><span style="font-size:0.6rem;">DARKOSINT</span></a>
-            <a href="https://animedub.co/" target="_blank" class="social-card" style="border: 1px solid #f97316;"><div>📺</div><span style="font-size:0.6rem;">ANIMEDUB</span></a>
-            <a href="https://inflact.com/" target="_blank" class="social-card" style="border: 1px solid #7c3aed;"><div>⚡</div><span style="font-size:0.6rem;">INFLACT</span></a>
-            <a href="https://adescargar.online/" target="_blank" class="social-card" style="border: 1px solid #0ea5e9;"><div>📥</div><span style="font-size:0.6rem;">DOWNLOAD</span></a>
-            <a href="https://ankergames.net/" target="_blank" class="social-card" style="border: 1px solid #71717a;"><div>🎮</div><span style="font-size:0.6rem;">ANKER</span></a>
-            <a href="https://www.instagram.com/funkyy_mit" target="_blank" class="social-card" style="border: 1px solid #FF8C00;"><div>😎</div><span style="font-size:0.6rem;">FUNKYY</span></a>
-            <a href="https://www.instagram.com/eco.rexo" target="_blank" class="social-card" style="border: 1px solid #4CAF50;"><div>🌿</div><span style="font-size:0.6rem;">ECO REXO</span></a>
-            <a href="https://www.instagram.com/shad.storie" target="_blank" class="social-card" style="border: 1px solid #5851DB;"><div>📖</div><span style="font-size:0.6rem;">SHAD</span></a>
-            <a href="https://codesandbox.io/" target="_blank" class="social-card" style="border: 1px solid #040404;"><div>📦</div><span style="font-size:0.6rem;">SANDBOX</span></a>
-            <a href="https://aistudio.google.com/" target="_blank" class="social-card" style="border: 1px solid #4285F4;"><div>🧪</div><span style="font-size:0.6rem;">AI STUDIO</span></a>
-            <a href="https://gemini.google.com/" target="_blank" class="social-card" style="border: 1px solid #8E75FF;"><div>✨</div><span style="font-size:0.6rem;">GEMINI</span></a>
-            <a href="https://cloud.google.com/" target="_blank" class="social-card" style="border: 1px solid #FBBC04;"><div>☁️</div><span style="font-size:0.6rem;">G-CLOUD</span></a>
-        </div>
-    </div>
-
-    <div class="system-log-container">
-        <div style="font-size:0.6rem; color:var(--standard-blue); margin-bottom:5px;">🛰️ LIVE NETWORK ACTIVITY</div>
-        <div id="log-entries"></div>
+        <div class="social-grid" id="tool-grid"></div>
     </div>
 </div>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://miuxo-a750e-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    const ADMIN_CODE = "0000";
+    const STD_CODE = "1111";
+    const upiID = "8606226353@fam";
 
-    let isAdminMode = false;
-    let mySessionRef = null;
+    const VIP_TOOLS = [ { name: "NEAPAY", url: "https://neapay.com/", icon: "🏦", border: "#1a365d" }, { name: "DARKOSINT", url: "https://darkosint.in/", icon: "🔍", border: "#991b1b" } ]; 
+    const NORMAL_TOOLS = [ 
+        { name: "BUY VIP", url: "javascript:openPayModal()", icon: "💎", border: "#fbbf24" }, 
+        { name: "DISCORD", url: "https://discord.com/invite/2rcKEjsVwV", icon: "💬", border: "#5865F2" }
+    ];
 
-    // --- VIP CREATION ---
-    async function adminCreateVip() {
-        const customCode = document.getElementById('manual-code').value;
-        const note = document.getElementById('manual-note').value || "ADMIN_GEN";
-        const finalCode = customCode || Math.floor(1000 + Math.random() * 9000).toString();
-        
-        await database.ref(finalCode).set("VIP");
-        await database.ref('transactions/' + Date.now()).set({ 
-            code: finalCode, 
-            time: new Date().toLocaleString(),
-            note: note
-        });
-        
-        alert(`VIP Created: ${finalCode} for ${note}`);
-        document.getElementById('manual-code').value = '';
-        document.getElementById('manual-note').value = '';
+    // COUNTDOWN LOGIC
+    function updateCountdown() {
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const diff = midnight - now;
+
+        const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+        const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+        const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+
+        document.getElementById('expire-timer').innerText = `${h}:${m}:${s}`;
     }
 
-    async function trackPresence(type) {
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            const loc = `${data.city}, ${data.country_name}`;
-            mySessionRef = database.ref('active_sessions').push();
-            mySessionRef.set({ loc, type, time: new Date().toLocaleTimeString() });
-            mySessionRef.onDisconnect().remove();
-        } catch (e) { console.log(e); }
+    function openPayModal() {
+        const upiUri = `upi://pay?pa=${upiID}&pn=MIUXO&am=50&cu=INR&tn=Hub_Access`;
+        document.getElementById('upiQR').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUri)}`;
+        document.getElementById('upiLink').href = upiUri;
+        document.getElementById('upiModal').style.display = 'flex';
     }
+    function closePayModal() { document.getElementById('upiModal').style.display = 'none'; }
 
-    function toggleMaintenance(status) { database.ref('system_settings/maintenance').set(status); }
+    function unlockSession() {
+        const key = document.getElementById('access-key').value;
+        const tag = document.getElementById('session-tag');
+        const todayDate = new Date().getDate();
+        const tempVIPKey = "MX" + todayDate + "PAY";
 
-    function syncMaintenance() {
-        database.ref('system_settings/maintenance').on('value', snap => {
-            const isMaint = snap.val();
-            document.getElementById('m-toggle').checked = isMaint;
-            if (isMaint && !isAdminMode) document.getElementById('maintenance-screen').style.display = 'flex';
-            else document.getElementById('maintenance-screen').style.display = 'none';
-        });
-    }
-
-    function syncBroadcast() {
-        database.ref('system_broadcast').on('value', snap => {
-            const ticker = document.getElementById('broadcast-ticker');
-            if(snap.exists()) { ticker.style.display = 'block'; document.getElementById('ticker-content').innerText = snap.val(); }
-            else ticker.style.display = 'none';
-        });
-    }
-
-    function openAdmin() { isAdminMode = true; document.getElementById('admin-panel').style.display = 'block'; loadAdminData(); }
-    function closeAdmin() { isAdminMode = false; document.getElementById('admin-panel').style.display = 'none'; }
-
-    async function loadAdminData() {
-        database.ref('transactions').on('value', snap => {
-            const body = document.getElementById('tx-body');
-            let html = ""; let count = 0;
-            snap.forEach(c => {
-                const d = c.val();
-                html = `<tr><td>${d.time}</td><td>${d.note || c.key}</td><td style="color:var(--vip-gold)">${d.code}</td><td><button class="ban-btn" onclick="banUser('${c.key}', '${d.code}')">DEL</button></td></tr>` + html;
-                count++;
-            });
-            body.innerHTML = html;
-            document.getElementById('stat-rev').innerText = `₹${count * 50}`;
-            document.getElementById('stat-users').innerText = count;
-        });
-
-        database.ref('active_sessions').on('value', snap => {
-            const body = document.getElementById('traffic-body');
-            let html = ""; let onlineCount = 0;
-            snap.forEach(c => {
-                const d = c.val();
-                html += `<tr><td>${c.key.substring(1,8)}</td><td>${d.loc}</td><td style="color:${d.type=='VIP'?'var(--vip-gold)':'#94a3b8'}">${d.type}</td><td>${d.time}</td></tr>`;
-                onlineCount++;
-            });
-            body.innerHTML = html;
-            document.getElementById('stat-active').innerText = onlineCount;
-        });
-    }
-
-    async function banUser(id, code) {
-        if(confirm("Revoke VIP access?")) {
-            await database.ref(code).remove();
-            await database.ref('transactions/' + id).remove();
+        if(key === ADMIN_CODE) { 
+            activeList = [...VIP_TOOLS, ...NORMAL_TOOLS]; 
+            tag.innerText = "ROOT ADMIN"; 
+        } 
+        else if(key === tempVIPKey) { 
+            activeList = VIP_TOOLS; 
+            tag.innerText = "PAID SESSION (24H)"; 
         }
+        else if(key === STD_CODE) { 
+            activeList = NORMAL_TOOLS; 
+            tag.innerText = "GUEST ACCESS"; 
+        } 
+        else { alert("INVALID CODE"); return; }
+        
+        render(activeList);
+        show();
     }
 
-    async function unlockSession() {
-        const input = document.getElementById('access-key').value;
-        const loader = document.getElementById('loader-overlay');
-        if(!input) return;
-        loader.style.display = 'flex';
-
-        const adminSnap = await database.ref('admin_settings/master_key').once('value');
-        if (input === adminSnap.val()) { loader.style.display = 'none'; openAdmin(); return; }
-
-        database.ref(input).once('value').then(snap => {
-            setTimeout(() => {
-                loader.style.display = 'none';
-                if(snap.exists()) finalizeLogin("VIP SESSION");
-                else alert("Invalid Access Code");
-            }, 800);
-        });
+    function render(list) {
+        document.getElementById('tool-grid').innerHTML = list.map(t => `
+            <a href="${t.url}" target="${t.url.startsWith('javascript') ? '_self' : '_blank'}" class="social-card" style="border-color:${t.border}">
+                <div style="font-size:1.5rem; margin-bottom:5px;">${t.icon}</div>
+                <div style="font-size:0.6rem; font-weight:800;">${t.name}</div>
+            </a>`).join('');
     }
 
-    function freeLogin() { finalizeLogin("GUEST SESSION"); }
-    function finalizeLogin(tag) {
-        document.getElementById('auth-gate').style.transform = "translateY(-100%)";
+    function show() {
+        document.getElementById('auth-gate').style.display = 'none';
         document.getElementById('main-hub').style.display = 'flex';
-        document.getElementById('session-tag').innerText = tag;
-        trackPresence(tag.includes("VIP") ? "VIP" : "GUEST");
     }
 
-    async function generateVipCode() {
-        const utr = document.getElementById('utr-input').value;
-        if(utr.length < 12) return alert("Enter 12-digit UTR!");
-        const code = Math.floor(1000 + Math.random() * 9000).toString();
-        await database.ref(code).set("VIP");
-        await database.ref('transactions/' + utr).set({ code, time: new Date().toLocaleString(), note: "AUTO_PAY" });
-        alert("Code: " + code);
-        document.getElementById('access-key').value = code;
+    function checkHint() {
+        const val = document.getElementById('access-key').value;
+        const todayDate = new Date().getDate();
+        const gate = document.getElementById('gate-title');
+        if(val === ADMIN_CODE) gate.style.color = "#ff003c";
+        else if(val === "MX"+todayDate+"PAY") gate.style.color = "#fbbf24";
+        else gate.style.color = "white";
     }
 
-    // Animation & UI
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let dots = [];
-    window.onload = () => {
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        dots = Array.from({length: 40}, () => ({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2}));
-        animate(); syncBroadcast(); syncMaintenance();
-    };
-    function animate() {
-        ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(255,255,255,0.1)";
-        dots.forEach(d => { ctx.beginPath(); ctx.arc(d.x, d.y, d.s, 0, 7); ctx.fill(); d.y += 0.4; if(d.y > canvas.height) d.y = 0; });
-        requestAnimationFrame(animate);
-    }
+    setInterval(updateCountdown, 1000);
     setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    updateCountdown();
 </script>
 </body>
 </html>
